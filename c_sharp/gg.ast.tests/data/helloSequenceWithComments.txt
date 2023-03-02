@@ -1,0 +1,18 @@
+﻿
+/** 
+ * Comments test
+ */
+
+helloSequenceWorld = (
+	hello, // one
+	sequence, // two
+	// three
+	world 
+);
+
+/*first */ hello = "hello";
+sequence /* second */ = "sequence";
+// in between
+world = /* third */ "world" /* fifth */ ;
+
+// the end

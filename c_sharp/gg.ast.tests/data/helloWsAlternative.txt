@@ -1,0 +1,20 @@
+﻿
+// use the shorthand whitespace to change the default whitespace (' \t\r\n') to ('_+')
+ws = '_+'*;
+
+helloRepeatWorld = (hello[1..2], repeatStr[], world, point);
+
+hello		= "hello";
+repeatStr	= "repeat";
+
+// change the whitespace again to '&', this means that in between 'world' literals
+// only the '&' characters are now accepted as whitespace 
+whitespace	= '&'*;
+
+world		= worldToken[2];
+worldToken  = "world";
+
+// clear the whitespace
+whitespace	= "";
+
+point		= "point"+;

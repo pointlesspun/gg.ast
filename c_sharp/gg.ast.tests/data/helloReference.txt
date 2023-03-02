@@ -1,0 +1,3 @@
+﻿
+helloWorld	= "hello ref world";
+main		= helloWorld;

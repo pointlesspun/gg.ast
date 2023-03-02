@@ -1,0 +1,6 @@
+﻿
+helloSequenceWorld = hello sequence world;
+
+hello	 = "hello";
+sequence = "sequence";
+world	 = "world";

@@ -1,0 +1,7 @@
+﻿
+helloRepeatWorld = (hello[1..2], repeatStr[], world);
+
+hello		= "hello";
+repeatStr	= "repeat";
+world		= worldToken[2];
+worldToken  = "world";

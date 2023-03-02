@@ -1,0 +1,6 @@
+﻿
+helloOrWorld = ( hello | or | world );
+
+hello	= "hello";
+or		= "or";
+world 	= "world";

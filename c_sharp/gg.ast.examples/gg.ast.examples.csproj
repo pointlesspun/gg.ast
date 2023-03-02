@@ -1,0 +1,58 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="calculator\calculator.spec" />
+    <None Remove="introduction\charsets.spec" />
+    <None Remove="introduction\hello_world.spec" />
+    <None Remove="introduction\not.spec" />
+    <None Remove="introduction\or.spec" />
+    <None Remove="introduction\repeat.spec" />
+    <None Remove="introduction\sequences.spec" />
+    <None Remove="json\json.spec" />
+    <None Remove="types\numbers.spec" />
+    <None Remove="types\types.spec" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="calculator\calculator.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\not.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\repeat.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\or.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\sequences.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\charsets.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="introduction\hello_world.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="json\json.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="types\numbers.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="types\types.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\gg.ast\gg.ast.csproj" />
+  </ItemGroup>
+
+</Project>

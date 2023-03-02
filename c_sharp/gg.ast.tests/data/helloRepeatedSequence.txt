@@ -1,0 +1,13 @@
+﻿
+helloRepeatWorld = (hello<1..2>, repeatStr*, world);
+
+# ws		= ' \t\r\n';
+
+hello		= ws* helloToken;
+helloToken  = "hello";
+
+repeatStr	= ws* repeatToken;
+repeatToken = "repeat";
+
+world		= (ws* worldToken)<2>;
+worldToken  = "world";
