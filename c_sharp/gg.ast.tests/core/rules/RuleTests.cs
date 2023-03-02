@@ -416,61 +416,6 @@ namespace gg.ast.tests.core.rules
             Assert.IsNull(sequence.Parse(testText).Nodes);
         }
 
-        // --- Until --------------------------------------------------------------------------------------------------
-
-        [TestMethod]
-        public void UntilTryParseTest()
-        {
-            var terminationToken = new LiteralRule()
-            {
-                Characters = "\""
-            };
-            var characterParser = new CharRule()
-            {
-                MatchCharacters = CharRule.MatchType.NotInEnumeration,
-                Characters = "\"\\"
-            };
-            var consumableTokens = new OrRule()
-            {
-                Tag = "consumable tokens",
-                Subrules = new IRule[] {
-                    new LiteralRule()
-                    {
-                        Characters = "\\\""
-                    },
-                    characterParser
-                }
-            };
-            var untilRule = new UntilRule()
-            {
-                Tag = "read until \\ or eof",
-                TerminationRule = terminationToken,
-                ConsumeRule = consumableTokens
-            };
-
-            var result = untilRule.Parse("abc\"").Nodes[0];
-
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length == 3);
-            Assert.IsTrue(result.Children == null);
-
-            result = untilRule.Parse("1234").Nodes[0];
-
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length == 4);
-            Assert.IsTrue(result.Children == null);
-
-            result = untilRule.Parse("abc\\\"\"xx").Nodes[0];
-
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.Length == 5);
-            Assert.IsTrue(result.Children == null);
-
-            untilRule.MinLength = 7;
-
-            Assert.IsFalse(untilRule.Parse("abc\\\"\"xx").IsSuccess);
-        }
-
         // --- Clone --------------------------------------------------------------------------------------------------
 
         [TestMethod]

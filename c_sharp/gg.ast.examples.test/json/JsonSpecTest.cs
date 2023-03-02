@@ -68,8 +68,8 @@ namespace gg.ast.tests.interpreter
         public void ScienceTest()
         {
             var interpreter = new ParserFactory().ParseFile("json/json.spec");
-            var donutText = File.ReadAllText("json/science.json");
-            var result = interpreter.Parse(donutText);
+            var scienceText = File.ReadAllText("json/science.json");
+            var result = interpreter.Parse(scienceText);
 
             Assert.IsTrue(result.IsSuccess);
 
