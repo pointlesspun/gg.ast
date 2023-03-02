@@ -10,7 +10,7 @@ namespace gg.ast.util
     /// <summary>
     /// Extension methods on strings
     /// </summary>
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         /// <summary>
         /// Add 'count' prefixes to the given string
@@ -72,7 +72,7 @@ namespace gg.ast.util
 
             while (index >= 0)
             {
-                if (endOfLine.IndexOf(text[index]) >= 0)
+                if (endOfLine.Contains(text[index]))
                 {
                     line++;
                 }
@@ -83,9 +83,12 @@ namespace gg.ast.util
             return (line, character);
         }
 
+        [GeneratedRegex("\\r\\n?|\\n")]
+        private static partial Regex SubstringRegex();
+
         public static string SubStringNoLineBreaks(this string s, int start, int length, string replacement = "")
         {
-            return Regex.Replace(s.Substring(start, length), @"\r\n?|\n", replacement);
+            return SubstringRegex().Replace(s.Substring(start, length), replacement);
         }
 
         public static int SkipCharacters(this string text, int index, string characters = " \t\r\n")
@@ -96,7 +99,7 @@ namespace gg.ast.util
 
             if (!string.IsNullOrEmpty(characters) && index >= 0)
             {
-                while (currentIndex < text.Length && characters != null && characters.IndexOf(text[currentIndex]) >= 0)
+                while (currentIndex < text.Length && characters != null && characters.Contains(text[currentIndex]))
                 {
                     currentIndex++;
                 }
@@ -115,7 +118,7 @@ namespace gg.ast.util
             var prefix = startIndex > 0 ? prefixText : "";
             var postFix = endIndex < text.Length - 1 ? postfixText : "";
 
-            return prefix + text.Substring(startIndex, length) + postFix;
+            return string.Concat(prefix, text.AsSpan(startIndex, length), postFix);
         }
 
 
@@ -170,5 +173,6 @@ namespace gg.ast.util
         // https://stackoverflow.com/questions/3754582/is-there-an-easy-way-to-return-a-string-repeated-x-number-of-times
         public static string Repeat(this string s, int n, string separator = "")
             => new StringBuilder((s.Length + separator.Length)* n).Insert(0, s + separator, n).ToString();
+        
     }
 }

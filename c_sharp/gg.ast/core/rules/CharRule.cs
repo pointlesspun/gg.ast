@@ -81,7 +81,7 @@ namespace gg.ast.core.rules
                     MatchType.Any => Match(text, index),
                     MatchType.InRange => Match(text, index, c => c >= Characters[0] && c <= Characters[1]),
                     MatchType.InMultiRange => Match(text, index, c => IsInMultiRange(c, Characters)),
-                    MatchType.InEnumeration => Match(text, index, c => Characters.IndexOf(c) >= 0),
+                    MatchType.InEnumeration => Match(text, index, c => Characters.Contains(c)),
                     MatchType.NotInEnumeration => Match(text, index, c => Characters.IndexOf(c) < 0),
                     _ => ParseResult.Fail,
                 };
@@ -112,7 +112,7 @@ namespace gg.ast.core.rules
                     : ParseResult.Fail;
         }
         
-        private bool IsInMultiRange(char c, string multiRange)
+        private static bool IsInMultiRange(char c, string multiRange)
         {
             for (var i = 0; i < multiRange.Length; i += 2)
             {

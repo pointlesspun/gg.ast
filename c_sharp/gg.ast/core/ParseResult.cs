@@ -11,7 +11,7 @@ namespace gg.ast.core
     /// </summary>
     public struct ParseResult
     {
-        public static readonly ParseResult Fail = new ParseResult()
+        public static readonly ParseResult Fail = new()
         {
             IsSuccess = false,
             Nodes = null,

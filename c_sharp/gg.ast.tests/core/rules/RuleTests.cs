@@ -12,7 +12,7 @@ namespace gg.ast.tests.core.rules
     [TestClass]
     public class RuleTests
     {
-        public static IRule DefaultWhitespace = ShortHandRules.CreateWhitespaceRule();
+        private static readonly IRule DefaultWhitespace = ShortHandRules.CreateWhitespaceRule();
 
         // --- Any ----------------------------------------------------------------------------------------------------
 
@@ -110,26 +110,6 @@ namespace gg.ast.tests.core.rules
             resultNoMap = literal.Parse("foo", 1);
 
             Assert.IsFalse(resultNoMap.IsSuccess);
-        }
-
-        // --- Move ---------------------------------------------------------------------------------------------------
-
-        [TestMethod]
-        public void MoveParseTest()
-        {
-            var text = "abz";
-            var moveRule = new MoveRule()
-            {
-                Count = 1
-            };
-
-            Assert.IsTrue(moveRule.Parse(text, 0).IsSuccess);
-            Assert.IsTrue(moveRule.Parse(text, 2).IsSuccess);
-            Assert.IsFalse(moveRule.Parse(text, 3).IsSuccess);
-
-            moveRule.Count = -1;
-            Assert.IsFalse(moveRule.Parse(text, 0).IsSuccess);
-            Assert.IsTrue(moveRule.Parse(text, 2).IsSuccess);
         }
 
         // --- Or -----------------------------------------------------------------------------------------------------

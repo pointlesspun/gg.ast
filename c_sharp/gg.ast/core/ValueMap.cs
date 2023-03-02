@@ -10,7 +10,7 @@ namespace gg.ast.core
 
     public class ValueMap
     {
-        private readonly Dictionary<string, MapFunction> _functionLookup = new Dictionary<string, MapFunction>();
+        private readonly Dictionary<string, MapFunction> _functionLookup = new();
 
         public MapFunction this[string index]
         {
