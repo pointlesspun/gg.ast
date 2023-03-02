@@ -40,29 +40,32 @@ namespace gg.ast.common
                     }
                 }
             };
-        }       
+        }
 
         public static IRule CreateMultilineCommentRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Hidden)
         {
-            var beginOfComment = new LiteralRule()
+            var commentStart = new LiteralRule()
             {
                 Tag = config.Tags.MultiLineCommentBegin,
                 Characters = config.Tokens.MultiLineCommentBegin
             };
-            var endOfCommentLiteral = new LiteralRule()
+
+            var commentEnd = new LiteralRule()
             {
                 Tag = config.Tags.MultiLineCommentEnd,
                 Characters = config.Tokens.MultiLineCommentEnd
             };
-            var endOfComment = new CriticalRule()
+
+            var notEndOfComment = new RepeatRule()
             {
-                Subrule = new UntilRule()
+                Subrule = new NotRule()
                 {
-                    Tag = "until end of multicomment",
-                    TerminationRule = endOfCommentLiteral,
-                    Visibility = RuleVisiblity.Hidden,
-                    ConsumeTerminationTokens = true
-                }
+                    Subrule = commentEnd,
+                    Skip = 1
+                },
+                Visibility = RuleVisiblity.Hidden,
+                Min = 0,
+                Max = -1
             };
 
             return new SequenceRule()
@@ -71,8 +74,9 @@ namespace gg.ast.common
                 Visibility = visibility,
                 Subrules = new IRule[]
                 {
-                    beginOfComment,
-                    endOfComment
+                    commentStart,
+                    notEndOfComment,
+                    commentEnd
                 }
             };
         }
@@ -152,25 +156,17 @@ namespace gg.ast.common
                 }
             };
 
-            var skippableCharacters = CreateDocumentCharactersRule(config, RuleVisiblity.Hidden);
-
-            // read all character until EOF, // or /*
-            return new UntilRule()
+            return new RepeatRule()
             {
-                Tag = config.Tags.DocumentText,
-                TerminationRule = isComment,
-                ConsumeRule = new RepeatRule()
+                Subrule = new NotRule()
                 {
-                    Tag = config.Tags.DocumentCharacters,
-                    Subrule = skippableCharacters,
-                    Visibility = RuleVisiblity.Hidden,
-                    Min = -1,
-                    Max = -1
+                    Subrule = isComment,
+                    Skip = 1
                 },
                 Visibility = visibility,
-                MinLength = 1
+                Min = 0,
+                Max = -1
             };
         }
-
     }
 }
