@@ -21,12 +21,6 @@ Spec[/Spec File/] -. input .-> PF
 AT{{ParseResult / AstTree}} -. input .-> VM
 VM[ValueMap] -- produces --> Objects
 Objects{{Objects}}
-
-style Text fill:#AAAAA0,stroke:#101000,color:#000
-style Spec fill:#AAAAA0,stroke:#101000,color:#000
-style Config fill:#60607A
-style PF fill:#60607A
-style VM fill:#60607A
 ```
 
 At the core of gg.ast is the `parser/lexer`. This is a collection of object defining rules which given an input int the form of some `text` can produce a series of tokens in the form of a `ParseResult` and an `AstTree`. The nodes of this `AstTree` can be mapped to some application specific objects using a `ValueMap`. While you can program the Lexer/Parser from scratch using the `RuleObjects` in the gg.ast project, it's easier to generate the Lexer/Parser using a `ParserFactory` and a so called `Spec File`. 
@@ -378,7 +372,7 @@ Based on these concepts a number of all core rules are defined which can be used
 ## v 0.2
 
 * Create Mermaid files from RuleSets and Asts
-* Remove until rule
+* Remove scan & move rules
 * Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
 * abort on failure (critical) = <"literal">;  "literal"[3]
 * add long form for some: sequence(a,b,c), or(a,b), repeat(a, 3, 4), critical(), not(a), scan(x), move(-3), anchor("bla"), characters(any, "axsv"),

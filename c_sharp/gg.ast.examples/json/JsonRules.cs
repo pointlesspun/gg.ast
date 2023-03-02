@@ -13,7 +13,7 @@ namespace gg.ast.examples.json
 {
     public static class JsonRules
     {
-        public static IRule DefaultWhitespace = ShortHandRules.CreateWhitespaceRule();
+        private static readonly IRule DefaultWhitespace = ShortHandRules.CreateWhitespaceRule();
 
         public static class Tags
         {
