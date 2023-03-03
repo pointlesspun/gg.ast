@@ -275,7 +275,7 @@ namespace gg.ast.tests.common
             {
                 Tag = "repeat x",
                 WhiteSpaceRule = null,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = -1,
                 Max = -1,
                 Subrule = new LiteralRule() { Tag = "x", Characters = "x" }
@@ -285,7 +285,7 @@ namespace gg.ast.tests.common
             {
                 Tag = "repeat xxx",
                 WhiteSpaceRule = null,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = -1,
                 Max = -1,
                 Subrule = new LiteralRule() { Tag = "xxx", Characters = "xxx" }
@@ -295,7 +295,7 @@ namespace gg.ast.tests.common
             {
                 Tag = "repeat xxx",
                 WhiteSpaceRule = null,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = -1,
                 Max = -1,
                 Subrule = new OrRule()

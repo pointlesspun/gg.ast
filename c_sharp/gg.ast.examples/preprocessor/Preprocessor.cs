@@ -16,12 +16,12 @@ namespace gg.ast.examples.preprocessor
     /// </summary>
     public static class Preprocessor
     {
-        public static IRule CreatePreprocessorRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule CreatePreprocessorRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             var documentParts = new OrRule()
             {
                 Tag = config.Tags.DocumentParts,
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Subrules = new IRule[]
                 {
                     CreateMultilineCommentRule(config, visibility),

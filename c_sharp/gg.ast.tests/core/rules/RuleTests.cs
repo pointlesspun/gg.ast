@@ -68,14 +68,14 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = text1,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var literal2 = new LiteralRule()
             {
                 Tag = "tag",
                 Characters = text1,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var resultNoMap = literal.Parse(text1);
@@ -122,7 +122,7 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textA,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var textB = "barr";
@@ -130,7 +130,7 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textB,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var or = new OrRule()
@@ -178,7 +178,7 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textA,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var repeat = new RepeatRule()
@@ -216,7 +216,7 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textA,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var repeat = new RepeatRule()
@@ -266,7 +266,7 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textA,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var repeat = new RepeatRule()
@@ -344,20 +344,20 @@ namespace gg.ast.tests.core.rules
             {
                 Tag = "tag",
                 Characters = textA,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
             var comma = new LiteralRule()
             {
                 Tag = "tag",
                 Characters = ",",
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
             var textB = "bar";
             var literalB = new LiteralRule()
             {
                 Tag = "tag",
                 Characters = textB,
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
 
             var sequence = new SequenceRule()

@@ -97,7 +97,7 @@ namespace gg.ast.examples.json
 
 
 
-        public static IRule CreateValueRule(RuleVisiblity visibility = RuleVisiblity.Hidden)
+        public static IRule CreateValueRule(NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var valueRule = new OrRule()
             {
@@ -112,7 +112,7 @@ namespace gg.ast.examples.json
                     {
                         Tag = Tags.Null,
                         Characters = "null",
-                        Visibility = RuleVisiblity.Visible
+                        Visibility = NodeVisiblity.Visible
                     }
                 }
             };
@@ -123,7 +123,7 @@ namespace gg.ast.examples.json
         public static IRule CreateValueRule(
             IRule objParser,
             IRule arrayParser,
-            RuleVisiblity visibility = RuleVisiblity.Hidden)
+            NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var result = (OrRule)CreateValueRule(visibility);
 
@@ -141,16 +141,16 @@ namespace gg.ast.examples.json
         public static IRule CreatePropertyRule(
             IRule propertyValueParser = null,
             IRule propertyNameParser = null,
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             string separator = ":")
         {
-            var valueRule = propertyValueParser ?? CreateValueRule(visibility: RuleVisiblity.Transitive);
+            var valueRule = propertyValueParser ?? CreateValueRule(visibility: NodeVisiblity.Transitive);
 
             var propertySeparatorRule = new LiteralRule()
             {
                 Tag = Tags.PropertySeparator,
                 Characters = separator,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             return new SequenceRule()
@@ -160,12 +160,12 @@ namespace gg.ast.examples.json
                 WhiteSpaceRule = DefaultWhitespace,
                 Subrules = new IRule[]
                 {
-                    propertyNameParser ?? TypeRules.CreateStringRule(delimiters: "\"", tag: Tags.PropertyName, visibility: RuleVisiblity.Visible),
+                    propertyNameParser ?? TypeRules.CreateStringRule(delimiters: "\"", tag: Tags.PropertyName, visibility: NodeVisiblity.Visible),
                     new CriticalRule()
                     {
                         Tag = propertySeparatorRule.Tag,
                         Subrule = propertySeparatorRule,
-                        Visibility = RuleVisiblity.Transitive
+                        Visibility = NodeVisiblity.Transitive
 
                     },
                     new CriticalRule()
@@ -179,7 +179,7 @@ namespace gg.ast.examples.json
 
         public static IRule CreatePropertyListRule(
             IRule propertyRule = null,
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             string separator = ",")
         {
             var listPropertyRule = propertyRule ?? CreatePropertyRule();
@@ -187,14 +187,14 @@ namespace gg.ast.examples.json
             var propertyChain = new SequenceRule()
             {
                 Tag = "property chain",
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 WhiteSpaceRule = DefaultWhitespace,
                 Subrules = new IRule[]
                 {
                     new LiteralRule() {
                     Tag = Tags.PropertyListSeparator,
                     Characters = separator,
-                    Visibility = RuleVisiblity.Hidden
+                    Visibility = NodeVisiblity.Hidden
                 },
                     new CriticalRule()
                     {
@@ -209,7 +209,7 @@ namespace gg.ast.examples.json
                 Tag = "property chain repeat",
                 Min = 0,
                 Max = -1,
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Subrule = propertyChain,
                 WhiteSpaceRule = DefaultWhitespace
             };
@@ -227,14 +227,14 @@ namespace gg.ast.examples.json
             };
         }
 
-        public static IRule CreateValueListRule(RuleVisiblity visibility = RuleVisiblity.Visible, IRule valueRule = null)
+        public static IRule CreateValueListRule(NodeVisiblity visibility = NodeVisiblity.Visible, IRule valueRule = null)
         {
             var listValueRule = valueRule ?? CreateValueRule();
 
             var valueChain = new SequenceRule()
             {
                 Tag = "comma value!",
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 WhiteSpaceRule = DefaultWhitespace,
                 Subrules = new IRule[]
                 {
@@ -242,7 +242,7 @@ namespace gg.ast.examples.json
                     {
                         Tag = Tags.ValueListSeparator,
                         Characters = ",",
-                        Visibility = RuleVisiblity.Hidden,
+                        Visibility = NodeVisiblity.Hidden,
                     },
                     new CriticalRule()
                     {
@@ -265,7 +265,7 @@ namespace gg.ast.examples.json
                         Tag = "value chain",
                         Min = 0,
                         Max = -1,
-                        Visibility = RuleVisiblity.Transitive,
+                        Visibility = NodeVisiblity.Transitive,
                         WhiteSpaceRule = DefaultWhitespace,
                         Subrule = valueChain
                     }
@@ -279,7 +279,7 @@ namespace gg.ast.examples.json
             var objectRule = new SequenceRule()
             {
                 Tag = Tags.Object,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 WhiteSpaceRule = DefaultWhitespace
             };
 
@@ -291,7 +291,7 @@ namespace gg.ast.examples.json
             var objectRule = new SequenceRule()
             {
                 Tag = Tags.Object,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 WhiteSpaceRule = DefaultWhitespace
             };
 
@@ -306,7 +306,7 @@ namespace gg.ast.examples.json
             var objectArrayParser = arrayParser ?? new SequenceRule()
             {
                 Tag = Tags.Array,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 WhiteSpaceRule = DefaultWhitespace
             };
 
@@ -322,22 +322,22 @@ namespace gg.ast.examples.json
                 {
                     Tag = "object start",
                     Characters = "{",
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                 },
                 new RepeatRule()
                 {
                     Tag = Tags.OptionalProperties,
-                    Subrule = CreatePropertyListRule(CreatePropertyRule(valueRule), visibility: RuleVisiblity.Transitive),
+                    Subrule = CreatePropertyListRule(CreatePropertyRule(valueRule), visibility: NodeVisiblity.Transitive),
                     Min = 0,
                     Max = 1,
-                    Visibility = RuleVisiblity.Transitive,
+                    Visibility = NodeVisiblity.Transitive,
                     WhiteSpaceRule = DefaultWhitespace
                 },
                 new LiteralRule()
                 {
                     Tag = "object end",
                     Characters = "}",
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                 }
             };
 
@@ -349,7 +349,7 @@ namespace gg.ast.examples.json
             var arrayRule = new SequenceRule()
             {
                 Tag = Tags.Array,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 WhiteSpaceRule = DefaultWhitespace
             };
 
@@ -377,22 +377,22 @@ namespace gg.ast.examples.json
                 {
                     Tag = "array start",
                     Characters = "[",
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                 },
                 new RepeatRule()
                 {
                     Tag = Tags.OptionalProperties,
-                    Subrule = CreateValueListRule(valueRule: valueRule, visibility: RuleVisiblity.Transitive),
+                    Subrule = CreateValueListRule(valueRule: valueRule, visibility: NodeVisiblity.Transitive),
                     Min = 0,
                     Max = 1,
-                    Visibility = RuleVisiblity.Transitive,
+                    Visibility = NodeVisiblity.Transitive,
                     WhiteSpaceRule = DefaultWhitespace
                 },
                 new LiteralRule()
                 {
                     Tag = "array end",
                     Characters = "]",
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                 },
             };
 
@@ -410,7 +410,7 @@ namespace gg.ast.examples.json
             return new OrRule()
             {
                 Tag = Tags.Document,
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Subrules = new IRule[]
                 {
                     objectRule, arrayRule

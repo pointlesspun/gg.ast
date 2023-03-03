@@ -10,7 +10,7 @@ namespace gg.ast.common
         public static IRule CreateStringRule(
             string tag = null,
             string delimiters = "\"",
-            RuleVisiblity visibility = RuleVisiblity.Visible) =>
+            NodeVisiblity visibility = NodeVisiblity.Visible) =>
             TypeRules.CreateStringRule(
                 CreateEscapeRule(),
                 escapeCharacterEnumeration: "\\",
@@ -19,13 +19,13 @@ namespace gg.ast.common
                 tag: tag ?? TypeRules.Tags.String
             );
 
-        public static IRule CreateEscapeRule(RuleVisiblity visibility = RuleVisiblity.Hidden, IRule wsRule = null)
+        public static IRule CreateEscapeRule(NodeVisiblity visibility = NodeVisiblity.Hidden, IRule wsRule = null)
         {
             var whitespaceRule = wsRule ?? ShortHandRules.CreateWhitespaceRule();
 
             var unicodeOrEscape = new OrRule()
             {
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Tag = TypeRules.Tags.EscapeCharacter,
                 Subrules = new IRule[]
                 {
@@ -55,7 +55,7 @@ namespace gg.ast.common
                 {
                     new CharRule()
                     {
-                        Visibility = RuleVisiblity.Hidden,
+                        Visibility = NodeVisiblity.Hidden,
                         Characters = "\\",
                         Min = 1,
                         Max = 1,

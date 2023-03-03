@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using gg.ast.core;
 
 using gg.ast.interpreter;
+using gg.ast.util;
 
 namespace gg.ast.tests.interpreter
 {
@@ -73,8 +74,16 @@ namespace gg.ast.tests.interpreter
 
             Assert.IsTrue(result.IsSuccess);
 
+            var output = new MermaidOutput()
+            {
+                CullNotVisibleNodes = true
+            };
+
+            // Debug.Write(output.ToString(interpreter));
+            
+            // output.ToMDFile(interpreter, order: MermaidOutput.Order.DepthFirst);
+
             // result.Nodes[0].ToString(s => Debug.Write(s), donutText);
         }
-
     }
 }
