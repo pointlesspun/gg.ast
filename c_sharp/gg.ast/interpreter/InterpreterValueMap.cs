@@ -83,7 +83,7 @@ namespace gg.ast.interpreter
             {
                 Tag = $"{config.Tags.Unnamed} {config.Tags.RuleReference}",
                 Reference = str.AsSpan(node.StartIndex, node.Length).ToString(),
-                Visibility = RuleVisiblity.Visible
+                Visibility = NodeVisiblity.Visible
             };
                 
             referenceRuleList.Add(result);
@@ -113,7 +113,7 @@ namespace gg.ast.interpreter
 
             rule.WhiteSpaceRule = hasWhitespace ? config.ValueMapWhiteSpace : null;
             rule.Tag = $"{config.Tags.Unnamed} {config.Tags.RuleGroup}";
-            rule.Visibility = RuleVisiblity.Transitive;
+            rule.Visibility = NodeVisiblity.Transitive;
 
             if (node.Children != null && node.Children.Count > 0)
             {
@@ -129,7 +129,7 @@ namespace gg.ast.interpreter
                     // (that's "how" this is meant to work) 
                     if (config.HideUnnamedRules && IsUnnamedRule(subrule))
                     {
-                        subrule.Visibility = RuleVisiblity.Transitive;
+                        subrule.Visibility = NodeVisiblity.Transitive;
                     }
 
                     idx++;
@@ -217,7 +217,7 @@ namespace gg.ast.interpreter
             return new NotRule()
             {
                 Subrule = ruleValue,
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Skip = tag == config.Tags.NotAndSkip ? 1 : 0
             };
         }
@@ -248,7 +248,7 @@ namespace gg.ast.interpreter
                 var repeatRule = (RepeatRule)map[repeatDefinition.Tag](str, repeatDefinition);
 
                 repeatRule.Subrule = notRule ?? ruleValue;
-                repeatRule.Visibility = RuleVisiblity.Transitive;
+                repeatRule.Visibility = NodeVisiblity.Transitive;
                 return repeatRule;
             }
         }
@@ -316,11 +316,11 @@ namespace gg.ast.interpreter
 
                 if (visibilityNode.Length == 1)
                 {
-                    rule.Visibility = RuleVisiblity.Transitive;
+                    rule.Visibility = NodeVisiblity.Transitive;
                 }
                 else if (visibilityNode.Length == 2)
                 {
-                    rule.Visibility = RuleVisiblity.Hidden;
+                    rule.Visibility = NodeVisiblity.Hidden;
                 }
                 else
                 {
@@ -331,7 +331,7 @@ namespace gg.ast.interpreter
             {
                 // by default named rules produce visible ast nodes
                 // (just because that's how the interpreter was intended to work)
-                rule.Visibility = RuleVisiblity.Visible;
+                rule.Visibility = NodeVisiblity.Visible;
             }
 
             return rule;
@@ -381,7 +381,7 @@ namespace gg.ast.interpreter
             {
                 Tag = config.Tags.Repeat,
                 WhiteSpaceRule = whitespace,
-                Visibility = RuleVisiblity.Transitive
+                Visibility = NodeVisiblity.Transitive
             };
 
             SetRangeMinMax(config, map, str, rule, node[0]);

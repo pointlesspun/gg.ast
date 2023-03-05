@@ -7,7 +7,7 @@ namespace gg.ast.common
 {
     public static class CommentsRules
     {
-        public static IRule CreateSinglelineCommentRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Hidden)
+        public static IRule CreateSinglelineCommentRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             return new SequenceRule()
             {
@@ -34,7 +34,7 @@ namespace gg.ast.common
                             Tag = "eoln",
                             Characters = "\n"
                         },
-                        Visibility = RuleVisiblity.Hidden,
+                        Visibility = NodeVisiblity.Hidden,
                         Min = -1,
                         Max = 1
                     }
@@ -42,7 +42,7 @@ namespace gg.ast.common
             };
         }
 
-        public static IRule CreateMultilineCommentRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Hidden)
+        public static IRule CreateMultilineCommentRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var commentStart = new LiteralRule()
             {
@@ -63,7 +63,7 @@ namespace gg.ast.common
                     Subrule = commentEnd,
                     Skip = 1
                 },
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = 0,
                 Max = -1
             };
@@ -81,7 +81,7 @@ namespace gg.ast.common
             };
         }
 
-        public static IRule CreateDocumentCharactersRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Hidden)
+        public static IRule CreateDocumentCharactersRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var singleLineCommentBegin = new LiteralRule()
             {
@@ -104,7 +104,7 @@ namespace gg.ast.common
             var singleOrMultilineComment = new OrRule()
             {
                 Tag = config.Tags.NotComment,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = new IRule[] {
                     singleLineCommentBegin,
                     multiLineCommentBegin
@@ -133,7 +133,7 @@ namespace gg.ast.common
             };
         }
 
-        public static IRule CreateDocumentTextRule(CommentsConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule CreateDocumentTextRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             var singleLineCommentBegin = new LiteralRule()
             {
@@ -149,7 +149,7 @@ namespace gg.ast.common
             var isComment = new OrRule()
             {
                 Tag = config.Tags.CommentStart,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = new IRule[] {
                     singleLineCommentBegin,
                     multiLineCommentBegin

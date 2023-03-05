@@ -9,13 +9,27 @@ namespace gg.ast.core
 {
     public abstract class RuleBase : IRule
     {
+        /// <summary>
+        /// Id which will be assigned when a new Rule is created, quick hack which 
+        /// will be problematic eg when storing rules to disk and then loading them
+        /// or in concurrent use. 
+        /// </summary>
+        private static int _ruleIndex = 0;
+
         public IRule Parent { get; set; }
 
-        public RuleVisiblity Visibility { get; set; } = RuleVisiblity.Visible;
+        public int Id { get; set; }
+
+        public NodeVisiblity Visibility { get; set; } = NodeVisiblity.Visible;
 
         public string Tag { get; set; }
 
         public RuleCommitHandler OnCommit { get; set; }
+
+        public RuleBase()
+        {
+            Id = _ruleIndex++;
+        }
 
         public ParseResult Parse(string text, int index = 0)
         {
@@ -67,12 +81,12 @@ namespace gg.ast.core
         private List<AstNode> MapVisibilityToNodes(int index, int length, List<AstNode> children) =>
             Visibility switch
             {
-                RuleVisiblity.Visible => new List<AstNode>()
+                NodeVisiblity.Visible => new List<AstNode>()
                 {
                     new AstNode(index, length, children: children, rule: this)
                 },
-                RuleVisiblity.Hidden => null,
-                RuleVisiblity.Transitive => children,
+                NodeVisiblity.Hidden => null,
+                NodeVisiblity.Transitive => children,
 
                 _ => throw new ArgumentException("unhandled case for RuleVisibility"),
             };

@@ -15,7 +15,7 @@ namespace gg.ast.interpreter
             var useBlock = new RepeatRule()
             {
                 Tag = config.Tags.UseList,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 Min = 0,
                 Max = -1,
                 Subrule = UseStatement(config)
@@ -32,20 +32,20 @@ namespace gg.ast.interpreter
             };
         }
 
-        public static IRule UseStatement(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Transitive)
+        public static IRule UseStatement(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Transitive)
         {
             var ruleTerminator = new CriticalRule().Bind(new LiteralRule()
             {
                 Tag = config.Tags.RuleTerminator,
                 Characters = config.Tokens.RuleTerminator,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             });
 
             var fileName = new CriticalRule().Bind(TypeRules.CreateStringRule(tag: config.Tags.UseFile));
 
             var useKeyword = new LiteralRule()
             {
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Characters = config.Tokens.Use,
             };
 
@@ -63,7 +63,7 @@ namespace gg.ast.interpreter
             };
         }
             
-        public static IRule CreateRuleListRule(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule CreateRuleListRule(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             return ZeroOrMore(InterpreterRule(config), config.WhiteSpace, visibility, config.Tags.RuleList);
         }
@@ -75,22 +75,22 @@ namespace gg.ast.interpreter
         /// <param name="config"></param>
         /// <param name="visibility"></param>
         /// <returns></returns>
-        public static IRule InterpreterRule(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule InterpreterRule(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             var ruleSeparator = new CriticalRule().Bind(new LiteralRule()
             {
                 Tag = config.Tags.RuleSeparator,
                 Characters = config.Tokens.RuleSeparator,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             });
 
-            var ruleValue = new CriticalRule().Bind(RuleValue(config, visibility: RuleVisiblity.Visible));
+            var ruleValue = new CriticalRule().Bind(RuleValue(config, visibility: NodeVisiblity.Visible));
 
             var ruleTerminator = new CriticalRule().Bind(new LiteralRule()
             {
                 Tag = config.Tags.RuleTerminator,
                 Characters = config.Tokens.RuleTerminator,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             });
 
             var visibilityRule = new CharRule()
@@ -123,7 +123,7 @@ namespace gg.ast.interpreter
         /// <param name="config"></param>
         /// <param name="visibility"></param>
         /// <returns></returns>
-        public static IRule MatchAnyCharacter(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule MatchAnyCharacter(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             return new LiteralRule()
             {
@@ -140,7 +140,7 @@ namespace gg.ast.interpreter
         /// <param name="visibility"></param>
         /// <returns></returns>
         public static IRule MatchCharactersInRange(InterpreterConfig config, 
-            RuleVisiblity visibility = RuleVisiblity.Visible)
+            NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             return ExtendedStringRules.CreateStringRule(tag: config.Tags.MatchCharactersInRange,
                                             delimiters:config.Tokens.MatchCharactersInRangeDelimiter,
@@ -154,7 +154,7 @@ namespace gg.ast.interpreter
         /// <param name="visibility"></param>
         /// <returns></returns>
         public static IRule MatchCharactersInSet(InterpreterConfig config,
-            RuleVisiblity visibility = RuleVisiblity.Visible)
+            NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             return ExtendedStringRules.CreateStringRule(tag: config.Tags.MatchCharactersInEnumeration,
                                             delimiters: config.Tokens.MatchCharactersInEnumerationDelimiter,
@@ -168,7 +168,7 @@ namespace gg.ast.interpreter
         /// <param name="visibility"></param>
         /// <returns></returns>
         public static IRule CharRuleSelection(InterpreterConfig config,
-            RuleVisiblity visibility = RuleVisiblity.Transitive)
+            NodeVisiblity visibility = NodeVisiblity.Transitive)
         {
             return new OrRule()
             {
@@ -194,7 +194,7 @@ namespace gg.ast.interpreter
         /// <returns></returns>
         public static IRule CreateIdentifierRule(
             InterpreterConfig config, 
-            RuleVisiblity visibility = RuleVisiblity.Visible, 
+            NodeVisiblity visibility = NodeVisiblity.Visible, 
             string tag = null)
         {
             var nonAlphanumericCharacter = new CharRule()
@@ -202,7 +202,7 @@ namespace gg.ast.interpreter
                 Tag = "non alphanumeric characters",
                 Characters = "_@.",
                 MatchCharacters = CharRule.MatchType.InEnumeration,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var alphanumericCharacter = new CharRule()
@@ -210,13 +210,13 @@ namespace gg.ast.interpreter
                 Tag = "alphanumeric",
                 Characters = "azAZ09",
                 MatchCharacters = CharRule.MatchType.InMultiRange,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var identifierCharacters = new OrRule()
             {
                 Tag = "Identifier character selection",
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = new IRule[] {
                     nonAlphanumericCharacter ,
                     alphanumericCharacter
@@ -234,16 +234,16 @@ namespace gg.ast.interpreter
         /// <param name="visibility"></param>
         public static IRule GroupingRule(
             InterpreterConfig config,
-            RuleVisiblity visibility = RuleVisiblity.Transitive,
+            NodeVisiblity visibility = NodeVisiblity.Transitive,
             IRule valueRule = null)
         {
-            var value = valueRule ?? RuleValue(config, RuleVisiblity.Visible);
+            var value = valueRule ?? RuleValue(config, NodeVisiblity.Visible);
 
             var beginGroup = new LiteralRule()
             {
                 Tag = config.Tags.BeginGroup,
                 Characters = config.Tokens.BeginGroup,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var endGroup = new CriticalRule()
@@ -251,7 +251,7 @@ namespace gg.ast.interpreter
                 {
                     Tag = config.Tags.EndGroup,
                     Characters = config.Tokens.EndGroup,
-                    Visibility = RuleVisiblity.Hidden
+                    Visibility = NodeVisiblity.Hidden
                 });
 
             return new SequenceRule()
@@ -277,7 +277,7 @@ namespace gg.ast.interpreter
         /// <returns></returns>
         public static IRule UnaryValueRule(
             InterpreterConfig config, 
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             IRule ruleValueRule = null)
         {
             var unaryValue = new SequenceRule()
@@ -336,7 +336,7 @@ namespace gg.ast.interpreter
         /// <returns></returns>
         public static IRule RuleValue(
             InterpreterConfig config, 
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             IRule unaryValueSelection = null)
         {
             var ruleValue = new OrRule()
@@ -379,7 +379,7 @@ namespace gg.ast.interpreter
             return new SequenceRule()
             {
                 Tag = "rule and annotations",
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Subrules = new IRule[]
                 {
                     notOperator,
@@ -391,7 +391,7 @@ namespace gg.ast.interpreter
         }
 
 
-        public static IRule SequenceRule(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible, IRule valueRule = null)
+        public static IRule SequenceRule(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible, IRule valueRule = null)
         {
             return CompositeRule(
                 config,
@@ -418,24 +418,24 @@ namespace gg.ast.interpreter
         /// <returns></returns>
         public static IRule NoSeparatorSequenceRule(
             InterpreterConfig config, 
-            RuleVisiblity visibility = RuleVisiblity.Visible, 
+            NodeVisiblity visibility = NodeVisiblity.Visible, 
             IRule valueRule = null)
         {
-            var groupValueRule = valueRule ?? UnaryValueRule(config, RuleVisiblity.Visible);
+            var groupValueRule = valueRule ?? UnaryValueRule(config, NodeVisiblity.Visible);
             var groupSeparatorRule = RuleGroupSeparatorRule(config.Tags.SequenceSeparator, config.Tokens.Whitespace, max: -1);
             
             var endGroup = new LiteralRule()
             {
                 Tag = config.Tags.EndGroup,
                 Characters = config.Tokens.EndGroup,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var ruleTerminator = new LiteralRule()
             {
                 Tag = "rule terminator",
                 Characters = ";",
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var chainEndTokens = SelectFrom(ruleTerminator, endGroup);
@@ -444,7 +444,7 @@ namespace gg.ast.interpreter
             {
                 Subrule = new SequenceRule()
                 {
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                     WhiteSpaceRule = null,
                     Subrules = new IRule[]
                     {
@@ -457,7 +457,7 @@ namespace gg.ast.interpreter
             var groupChain = new SequenceRule()
             {
                 Tag = $"{groupSeparatorRule} value!",
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 Subrules = new IRule[]
                 {
                     testEndGroupToken,
@@ -483,7 +483,7 @@ namespace gg.ast.interpreter
         }
 
 
-        public static IRule CreateOrRule(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible, IRule valueRule = null)
+        public static IRule CreateOrRule(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible, IRule valueRule = null)
         {
             return CompositeRule(
                 config,
@@ -499,7 +499,7 @@ namespace gg.ast.interpreter
         /// </summary>
         /// <param name="hidden"></param>
         /// <returns></returns>
-        public static IRule CreateRepeatRule(InterpreterConfig config, RuleVisiblity visibility = RuleVisiblity.Visible)
+        public static IRule CreateRepeatRule(InterpreterConfig config, NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             // create all the repeat variations with whitespace ([], [N..], [..M], [N..M])
             var repeat = CreateRepeatRule(config, 
@@ -543,7 +543,7 @@ namespace gg.ast.interpreter
             var repeatUnaryValues = new OrRule()
             {
                 Tag = config.Tags.RepeatNoWhitespace,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 Subrules = new IRule[]
                 {
                     repeatOneOrMore,
@@ -570,20 +570,20 @@ namespace gg.ast.interpreter
             string tag,
             string startDelimiter,
             string endDelimiter,
-            RuleVisiblity visibility = RuleVisiblity.Visible)
+            NodeVisiblity visibility = NodeVisiblity.Visible)
         {
             var intRule = TypeRules.CreateIntegerRule(tag: TypeRules.Tags.Integer);
             var ellipsisRule = new LiteralRule()
             {
                 Tag = "ellipsis",
                 Characters = "..",
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
             var beginRepeat = new LiteralRule()
             {
                 Tag = "begin repeat",
                 Characters = startDelimiter,
-                Visibility = RuleVisiblity.Hidden
+                Visibility = NodeVisiblity.Hidden
             };
 
             var closeRepeat = new CriticalRule().Bind(
@@ -591,7 +591,7 @@ namespace gg.ast.interpreter
                 {
                     Tag = "close repeat",
                     Characters = endDelimiter,
-                    Visibility = RuleVisiblity.Hidden
+                    Visibility = NodeVisiblity.Hidden
                 });
 
             var repeatBetweenNAndM = new SequenceRule()
@@ -640,7 +640,7 @@ namespace gg.ast.interpreter
             return new OrRule()
             {
                 Tag = tag,
-                Visibility = RuleVisiblity.Visible,
+                Visibility = NodeVisiblity.Visible,
                 Subrules = new IRule[]
                 {
                     repeatBetweenNAndM,
@@ -661,7 +661,7 @@ namespace gg.ast.interpreter
                 Tag = separatorTag,
                 Characters = separatorCharacters,
                 MatchCharacters = CharRule.MatchType.InEnumeration,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = min,
                 Max = max
             };
@@ -687,16 +687,16 @@ namespace gg.ast.interpreter
             string compositeTag,
             IRule groupSeparatorRule,
             IRule whiteSpaceRule,
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             IRule valueRule = null)
         {
-            var groupValueRule = valueRule ?? UnaryValueRule(config, RuleVisiblity.Visible);
+            var groupValueRule = valueRule ?? UnaryValueRule(config, NodeVisiblity.Visible);
             var criticalValueRule = new CriticalRule().Bind(groupValueRule);
 
             var groupChain = new SequenceRule()
             {
                 Tag = $"{groupSeparatorRule} value!",
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 WhiteSpaceRule = whiteSpaceRule,
                 Subrules = new IRule[]
                 {

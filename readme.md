@@ -372,7 +372,6 @@ Based on these concepts a number of all core rules are defined which can be used
 ## v 0.2
 
 * Create Mermaid files from RuleSets and Asts
-* Remove scan & move rules
 * Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
 * abort on failure (critical) = <"literal">;  "literal"[3]
 * add long form for some: sequence(a,b,c), or(a,b), repeat(a, 3, 4), critical(), not(a), scan(x), move(-3), anchor("bla"), characters(any, "axsv"),

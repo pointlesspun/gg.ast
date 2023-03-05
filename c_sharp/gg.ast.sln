@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gg.ast.examples", "gg.ast.e
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gg.ast.tests", "gg.ast.tests\gg.ast.tests.csproj", "{B2D1F0F7-F2E0-48F8-AB9F-516801D29E77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gg.ast.examples.test", "gg.ast.examples.test\gg.ast.examples.test.csproj", "{C8736A3A-E108-42F5-BD59-C11B40BB61DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "gg.ast.examples.test", "gg.ast.examples.test\gg.ast.examples.test.csproj", "{C8736A3A-E108-42F5-BD59-C11B40BB61DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gg.ast.tool", "gg.ast.tool\gg.ast.tool.csproj", "{B0F7958C-2D42-47BF-9EC9-8AF7CAF5DBB7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{C8736A3A-E108-42F5-BD59-C11B40BB61DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8736A3A-E108-42F5-BD59-C11B40BB61DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8736A3A-E108-42F5-BD59-C11B40BB61DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0F7958C-2D42-47BF-9EC9-8AF7CAF5DBB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0F7958C-2D42-47BF-9EC9-8AF7CAF5DBB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0F7958C-2D42-47BF-9EC9-8AF7CAF5DBB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0F7958C-2D42-47BF-9EC9-8AF7CAF5DBB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

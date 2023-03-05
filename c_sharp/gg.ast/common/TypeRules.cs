@@ -56,7 +56,7 @@ namespace gg.ast.common
             return result;
         }
 
-        public static IRule CreateNumberStringRule(RuleVisiblity isHidden = RuleVisiblity.Hidden, int min = 1, int max = -1) =>
+        public static IRule CreateNumberStringRule(NodeVisiblity isHidden = NodeVisiblity.Hidden, int min = 1, int max = -1) =>
             new CharRule()
             {
                 Tag = Tags.NumberString,
@@ -67,7 +67,7 @@ namespace gg.ast.common
                 Characters = "09"
             };
 
-        public static IRule CreateHexCharactersRule(RuleVisiblity isHidden = RuleVisiblity.Hidden, int min = 1, int max = -1, bool abortOnFailure = false)
+        public static IRule CreateHexCharactersRule(NodeVisiblity isHidden = NodeVisiblity.Hidden, int min = 1, int max = -1, bool abortOnFailure = false)
         {
             var rule = new CharRule()
             {
@@ -88,7 +88,7 @@ namespace gg.ast.common
                 : rule;
         }
 
-        public static IRule CreateSignRule(RuleVisiblity isHidden = RuleVisiblity.Hidden) =>      
+        public static IRule CreateSignRule(NodeVisiblity isHidden = NodeVisiblity.Hidden) =>      
            new CharRule()
            {
                Tag = Tags.Sign,
@@ -100,20 +100,20 @@ namespace gg.ast.common
            };
 
 
-        public static IRule CreateIntegerRule(RuleVisiblity visibility = RuleVisiblity.Visible, string tag = null) =>        
+        public static IRule CreateIntegerRule(NodeVisiblity visibility = NodeVisiblity.Visible, string tag = null) =>        
             new SequenceRule()
             {
                 Tag = tag ?? Tags.Integer,
                 Visibility = visibility,
                 Subrules = new IRule[]
                 {
-                    CreateSignRule(RuleVisiblity.Hidden),
-                    CreateNumberStringRule(RuleVisiblity.Hidden)
+                    CreateSignRule(NodeVisiblity.Hidden),
+                    CreateNumberStringRule(NodeVisiblity.Hidden)
                 }
             };
 
         public static IRule CreateDecimalRule(
-            RuleVisiblity visiblity = RuleVisiblity.Visible,
+            NodeVisiblity visiblity = NodeVisiblity.Visible,
             IRule integerRule = null,
             IRule numberStringRule = null,
             string tag = null) =>
@@ -123,24 +123,24 @@ namespace gg.ast.common
                 Visibility = visiblity,
                 Subrules = new IRule[]
                 {
-                    integerRule ?? CreateIntegerRule(RuleVisiblity.Hidden),
+                    integerRule ?? CreateIntegerRule(NodeVisiblity.Hidden),
                     new LiteralRule()
                     {
                         Tag = "dot",
                         Characters = "."
                     },
-                    numberStringRule ?? CreateNumberStringRule(RuleVisiblity.Hidden)
+                    numberStringRule ?? CreateNumberStringRule(NodeVisiblity.Hidden)
                 }
             };
 
         public static IRule CreateExponentRule(
-            RuleVisiblity visibility = RuleVisiblity.Visible,
+            NodeVisiblity visibility = NodeVisiblity.Visible,
             IRule integerRule = null,
             IRule decimalRule = null,
             string tag = null
 
         ) {
-            var exponentIntegerRule = integerRule ?? CreateIntegerRule(RuleVisiblity.Hidden);
+            var exponentIntegerRule = integerRule ?? CreateIntegerRule(NodeVisiblity.Hidden);
             var exponentToken = new LiteralRule() {
                 Tag = "exponent literal",
                 Characters = "e",
@@ -160,9 +160,9 @@ namespace gg.ast.common
             var decimalExponent = new SequenceRule()
             {
                 Tag = Tags.Decimal,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = new IRule[] {
-                    decimalRule ?? CreateDecimalRule(RuleVisiblity.Hidden),
+                    decimalRule ?? CreateDecimalRule(NodeVisiblity.Hidden),
                     exponentToken,
                     exponentIntegerRule
                 }
@@ -177,7 +177,7 @@ namespace gg.ast.common
         }
 
         public static IRule CreateNumberRule(
-            RuleVisiblity visibility = RuleVisiblity.Hidden,
+            NodeVisiblity visibility = NodeVisiblity.Hidden,
             IRule exponentRule = null,
             IRule decimalRule = null,
             IRule integerRule = null,
@@ -200,7 +200,7 @@ namespace gg.ast.common
             IRule argumentRule = null, 
             string escapeCharacters = "\\", 
             string letterEnumeration = "Uu", 
-            RuleVisiblity visibility = RuleVisiblity.Hidden,
+            NodeVisiblity visibility = NodeVisiblity.Hidden,
             bool abortOnCriticalFailue = true
         ) {
             var rules = new List<IRule>();
@@ -209,7 +209,7 @@ namespace gg.ast.common
             {
                 var rule = new CharRule()
                 {
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                     MatchCharacters = CharRule.MatchType.InEnumeration,
                     Characters = escapeCharacters,
                     Max = 1,
@@ -221,7 +221,7 @@ namespace gg.ast.common
             var escapeCharacterRule = new CharRule()
             {
                 Tag = Tags.EscapeSpecification,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 MatchCharacters = CharRule.MatchType.InEnumeration,
                 Characters = letterEnumeration,
                 Max = 1,
@@ -254,7 +254,7 @@ namespace gg.ast.common
             string escapeCharacterEnumeration,
             string delimiters = "\"'`", 
             string tag = null,
-            RuleVisiblity visibility = RuleVisiblity.Visible
+            NodeVisiblity visibility = NodeVisiblity.Visible
         ) {
             return CreateStringRule((str) => {
 
@@ -262,7 +262,7 @@ namespace gg.ast.common
                 {
                     MatchCharacters = CharRule.MatchType.NotInEnumeration,
                     Characters = escapeCharacterEnumeration + str,
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                     Min = 1,
                     Max = -1,                    
                 };
@@ -270,13 +270,13 @@ namespace gg.ast.common
                 return new RepeatRule()
                 {
                     Tag = "optional string characters",
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                     Min = 0,
                     Max = -1,
                     Subrule = new OrRule()
                     {
                         Tag = "(not) escape characters",
-                        Visibility = RuleVisiblity.Hidden,
+                        Visibility = NodeVisiblity.Hidden,
                         Subrules = new IRule[]
                         {
                             escapeRule, 
@@ -290,7 +290,7 @@ namespace gg.ast.common
         public static IRule CreateStringRule(
             string delimiters = "\"'`",
             string tag = null,
-            RuleVisiblity visibility = RuleVisiblity.Visible
+            NodeVisiblity visibility = NodeVisiblity.Visible
         )
         {
             var characterRuleFunction = new Func<string, IRule>(str =>
@@ -300,7 +300,7 @@ namespace gg.ast.common
                     MatchCharacters = CharRule.MatchType.NotInEnumeration,
                     Tag = Tags.StringCharacters,
                     Characters = str,
-                    Visibility = RuleVisiblity.Hidden,
+                    Visibility = NodeVisiblity.Hidden,
                     Min = 0,
                     Max = -1,
                 };
@@ -328,7 +328,7 @@ namespace gg.ast.common
             Func<string, IRule> characterRuleFunction,
             string delimiters = "\"'`",
             string tag = null,
-            RuleVisiblity visibility = RuleVisiblity.Visible
+            NodeVisiblity visibility = NodeVisiblity.Visible
         )
         {
             var subrules = new IRule[delimiters.Length];
@@ -346,18 +346,18 @@ namespace gg.ast.common
                         new LiteralRule() {
                             Tag = Tags.StartString,
                             Characters = delimiter.ToString(),
-                            Visibility = RuleVisiblity.Hidden
+                            Visibility = NodeVisiblity.Hidden
                         },
                         characterRuleFunction(delimiters[i].ToString()),
                         new CriticalRule() 
                         {
                             Tag = Tags.CloseString,
-                            Visibility = RuleVisiblity.Hidden,
+                            Visibility = NodeVisiblity.Hidden,
                             Subrule = new LiteralRule()
                             {
                                 Tag = Tags.CloseString,
                                 Characters = delimiter.ToString(),
-                                Visibility = RuleVisiblity.Hidden
+                                Visibility = NodeVisiblity.Hidden
                             },
                         }
                     },
@@ -367,14 +367,14 @@ namespace gg.ast.common
             return new OrRule()
             {
                 Tag = Tags.String,
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = subrules
             };
         }
 
         public static IRule CreateBooleanRule(
             string[] booleanLiterals = null, 
-            RuleVisiblity visibility = RuleVisiblity.Visible, 
+            NodeVisiblity visibility = NodeVisiblity.Visible, 
             string tag = null)
         {
             var literals = booleanLiterals ?? new string[] { "true", "false" };
