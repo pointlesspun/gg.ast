@@ -4,7 +4,7 @@
  * Rules to parse strings, booleans, hexadecimal numbers, integers, decimals, exponents and their superset: numbers.
  */
 
-using "./types/numbers.spec";
+using "./specfiles/numbers.spec";
 
 # typeValue = null | boolean | string | number;
 

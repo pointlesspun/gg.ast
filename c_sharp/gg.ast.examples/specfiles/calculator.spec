@@ -1,6 +1,6 @@
 ﻿/* (c) pointless pun, license: cc attribution 3.0 unported https://creativecommons.org/licenses/by/3.0/ */
 
-using "types/numbers.spec";
+using "./specfiles/numbers.spec";
 
 # calculation = evaluation[1..];
 

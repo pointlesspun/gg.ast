@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="calculator\calculator.spec" />
     <None Remove="introduction\charsets.spec" />
     <None Remove="introduction\hello_world.spec" />
     <None Remove="introduction\not.spec" />
@@ -14,12 +13,11 @@
     <None Remove="introduction\repeat.spec" />
     <None Remove="introduction\sequences.spec" />
     <None Remove="json\json.spec" />
-    <None Remove="types\numbers.spec" />
-    <None Remove="types\types.spec" />
+    <None Remove="specfiles\interpreter.spec" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="calculator\calculator.spec">
+    <Content Include="specfiles\calculator.spec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="introduction\not.spec">
@@ -40,13 +38,16 @@
     <Content Include="introduction\hello_world.spec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="json\json.spec">
+    <Content Include="specfiles\json.spec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="types\numbers.spec">
+    <Content Include="specfiles\interpreter.spec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="types\types.spec">
+    <Content Include="specfiles\numbers.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="specfiles\types.spec">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

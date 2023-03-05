@@ -30,7 +30,7 @@ namespace gg.ast.examples.test.introduction
         [TestMethod]
         public void HelloWorldSpecTest()
         {
-            var helloWorldRule = HelloWorld.HelloWorldSpecFile();
+            var helloWorldRule = HelloWorld.LoadSpecFile();
 
             var helloWorldText = "hello world";
             var helloWorldResult = helloWorldRule.Parse(helloWorldText);

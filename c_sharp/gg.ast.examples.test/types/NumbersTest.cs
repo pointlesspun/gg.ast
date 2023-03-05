@@ -22,7 +22,7 @@ namespace gg.ast.tests.interpreter
                 ("-0.2", "number", "decimal"),
                 ("0.1e123", "number", "exponent"),                
             };
-            var interpreter = new ParserFactory().ParseFile("types/numbers.spec");
+            var interpreter = new ParserFactory().ParseFile("specfiles/numbers.spec");
 
             Debug.WriteLine(interpreter.PrintRuleTree());
 

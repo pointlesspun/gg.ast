@@ -17,7 +17,7 @@ namespace gg.ast.examples.introduction
             };
         }
 
-        public static IRule HelloWorldSpecFile(string specFile = "introduction/hello_world.spec")
+        public static IRule LoadSpecFile(string specFile = "introduction/hello_world.spec")
         {
             return new ParserFactory().ParseFile(specFile);
         }

@@ -74,7 +74,11 @@ namespace gg.ast.interpreter
             var result = CreateInterpreterRule(_config).Parse(interpreterScript);
 
             if (result.IsSuccess && result.Nodes[0].Children != null && result.Nodes[0].Children.Count > 0)
-            {               
+            {
+                // register the whitespace rule
+                _ruleSet[_config.Tags.Whitespace] = _config.WhiteSpace;
+                _ruleSet[_config.Tags.WhitespaceShortHand] = _config.WhiteSpace;
+
                 // read the using and rule parts
                 var (useList, ruleList) = GetUseBlockAndRuleList(result.Nodes[0]);
 

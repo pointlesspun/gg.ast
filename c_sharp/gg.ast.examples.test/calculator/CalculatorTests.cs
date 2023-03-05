@@ -21,7 +21,7 @@ namespace gg.ast.examples.test.calculator
                 ("0.1e123 + ( 4 + (5*(3))) / (2-1)", "add", new string[] { "number", "divide" }),
             };
 
-            var interpreter = new ParserFactory().ParseFile("calculator/calculator.spec");
+            var interpreter = new ParserFactory().ParseFile("specfiles/calculator.spec");
 
             // Debug.WriteLine(interpreter.PrintRuleTree());
 

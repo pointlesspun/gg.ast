@@ -28,7 +28,7 @@ namespace gg.ast.tests.interpreter
                 ("-0.2", "number", "decimal"),
                 ("0.1e123", "number", "exponent"),
             };
-            var interpreter = new ParserFactory().ParseFileRules("json/json.spec")["jsonValue"];
+            var interpreter = new ParserFactory().ParseFileRules("specfiles/json.spec")["jsonValue"];
 
             Debug.WriteLine(interpreter.PrintRuleTree());
 
@@ -55,7 +55,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void DonutTest()
         {
-            var interpreter = new ParserFactory().ParseFile("json/json.spec");
+            var interpreter = new ParserFactory().ParseFile("specfiles/json.spec");
             var donutText = File.ReadAllText("json/donuts.json");
             var result = interpreter.Parse(donutText);
 
@@ -67,7 +67,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void ScienceTest()
         {
-            var interpreter = new ParserFactory().ParseFile("json/json.spec");
+            var interpreter = new ParserFactory().ParseFile("specfiles/json.spec");
             var scienceText = File.ReadAllText("json/science.json");
             var result = interpreter.Parse(scienceText);
 
