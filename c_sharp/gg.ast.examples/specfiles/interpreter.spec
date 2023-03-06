@@ -2,23 +2,25 @@
 
 using "./specfiles/types.spec";
 
-interpreter				= usingStatement*, rule*;
+interpreter				= usingStatements, ruleList;
 
-usingStatement			= "using", string, ";";
+usingStatements			= ("using", string, ";")*;
 
+ruleList				= rule*;
 rule					= visibility?, identifier, "=", ruleValue, ";";
 
 visibility				= "#";
 
-ruleValue				= groupType | unaryType;
+ruleValue				= groupType | unaryValue;
 
 groupType				= sequence | or | sequenceNoSeparator;
 
-unaryType				= not? (literal | identifier | charRule | grouping) repeat?;
+unaryValue				= not? (literal | identifier | charRule | grouping) repeat?;
 
-not						= "!";
+not						= "!"; 
 
-literal					= string;
+// xxx should be able to state literal = string
+literal					= '"' ( ("\\" $) | !'"\\'+ )* '"';
 
 charRule				= charRule.any | charRule.enumeration | charRule.range;
 charRule.any			= "$" | "any";
@@ -38,9 +40,9 @@ repeat.exact			= "[", integer, "]";
 
 repeat.unary			= "+" | "*" | "?";
 
-sequence				= unaryType, ",", unaryType, (",", unaryType)*;
-or						= unaryType, "|", unaryType, ("|", unaryType)*;
-sequenceNoSeparator		= unaryType whitespace unaryType (whitespace unaryType)*;
+sequence				= unaryValue, ",", unaryValue, (",", unaryValue)*;
+or						= unaryValue, "|", unaryValue, ("|", unaryValue)*;
+sequenceNoSeparator		= unaryValue whitespace unaryValue (whitespace unaryValue)*;
 
 identifier				= (`azAZ` | "_") (`azAZ09` | "_")*;
 

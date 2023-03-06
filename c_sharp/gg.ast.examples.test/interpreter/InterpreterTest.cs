@@ -41,5 +41,25 @@ namespace gg.ast.examples.test.interpreter
                 }
             }
         }
+
+        /// <summary>
+        /// Parse all known spec files with the interpreter spec file
+        /// </summary>
+        [TestMethod]
+        public void CreateHelloWorldInterpreterTest()
+        {
+            var rules = new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
+            var interpreter = rules["interpreter"];
+
+            var text = File.ReadAllText("./introduction/hello_world.spec");
+            
+            var helloWorldRule = new ParserFactory().ParseRules(interpreter, text)["helloWorld"];
+
+            var helloWorldText = "hello world";
+            var helloWorldResult = helloWorldRule.Parse(helloWorldText);
+
+            Assert.IsTrue(helloWorldResult.IsSuccess);
+
+        }
     }
 }

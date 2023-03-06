@@ -19,21 +19,21 @@ namespace gg.ast.interpreter
 
             public string Identifier { get; set; } = "identifier";
 
-            public string RuleList { get; set; } = "rule list";
+            public string RuleList { get; set; } = "ruleList";
             
             public string Rule { get; set; } = "rule";
 
             public string RuleVisibility { get; set; } = "rule visibility";
 
-            public string RuleTag { get; set; } = "rule tag";
+            public string RuleTag { get; set; } = "identifier";
             
-            public string RuleValue { get; set; } = "rule value";
+            public string RuleValue { get; set; } = "ruleValue";
 
-            public string UnaryValue { get; set; } = "unary value";
+            public string UnaryValue { get; set; } = "unaryValue";
 
-            public string RuleTerminator { get; set; } = "rule terminator";
+            public string RuleTerminator { get; set; } = "ruleTerminator";
 
-            public string RuleReference { get; set; } = "rule reference";
+            public string RuleReference { get; set; } = "ruleReference";
             
             public string Literal { get; set; } = "literal";
 
@@ -92,7 +92,7 @@ namespace gg.ast.interpreter
 
             public string WhitespaceShortHand { get; set; } = "ws";
 
-            public string UseList { get; set; } = "use";
+            public string UseList { get; set; } = "usingStatements";
 
             public string UseFile { get; set; } = "use file";
         }

@@ -71,43 +71,58 @@ namespace gg.ast.interpreter
         /// <returns>A dictionary of the rules (tag/irule) </returns>
         public Dictionary<string, IRule> ParseRules(string interpreterScript, bool findMainRule = true)
         {
-            var result = CreateInterpreterRule(_config).Parse(interpreterScript);
+            return ParseRules(CreateInterpreterRule(_config), interpreterScript, findMainRule);
+        }
 
-            if (result.IsSuccess && result.Nodes[0].Children != null && result.Nodes[0].Children.Count > 0)
+        public Dictionary<string, IRule> ParseRules(IRule interpreterRule, string interpreterScript, bool findMainRule = true)
+        {
+            var result = interpreterRule.Parse(interpreterScript);
+
+            if (result.IsSuccess
+                && result.Nodes[0].Children != null
+                && result.Nodes[0].Children.Count > 0)
             {
-                // register the whitespace rule
-                _ruleSet[_config.Tags.Whitespace] = _config.WhiteSpace;
-                _ruleSet[_config.Tags.WhitespaceShortHand] = _config.WhiteSpace;
-
-                // read the using and rule parts
-                var (useList, ruleList) = GetUseBlockAndRuleList(result.Nodes[0]);
-
-                if (useList != null)
-                {
-                    // import all the spec files referred to in the using block
-                    ParseUseList(useList, interpreterScript);
-                }
-
-                if (ruleList != null)
-                {
-                    // first pass, parse as many rules as we can and collect all references (to other rules) found
-                    var firstRuleTag = ParseRules(ruleList, interpreterScript);
-
-                    // fill in all references
-                    _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
-                    _referenceList.Clear();
-
-                    // if there is no main rule create a main rule referencing the first rule encountered
-                    if (findMainRule && !_ruleSet.ContainsKey(_config.Tags.Main))
-                    {
-                        _ruleSet[_config.Tags.Main] = _ruleSet[firstRuleTag];
-                    }
-                }
-
-                return _ruleSet;
+                return CreateInterpreterRules(result.Nodes, interpreterScript, findMainRule);
             }
 
             return null;
+        }
+
+        private Dictionary<string, IRule> CreateInterpreterRules(
+            List<AstNode> nodes, 
+            string interpreterScript, 
+            bool findMainRule = true
+        ) { 
+            // register the whitespace rule
+            _ruleSet[_config.Tags.Whitespace] = _config.WhiteSpace;
+            _ruleSet[_config.Tags.WhitespaceShortHand] = _config.WhiteSpace;
+
+            // read the using and rule parts
+            var (useList, ruleList) = GetUseBlockAndRuleList(nodes[0]);
+
+            if (useList != null)
+            {
+                // import all the spec files referred to in the using block
+                ParseUseList(useList, interpreterScript);
+            }
+
+            if (ruleList != null)
+            {
+                // first pass, parse as many rules as we can and collect all references (to other rules) found
+                var firstRuleTag = ParseRules(ruleList, interpreterScript);
+
+                // fill in all references
+                _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
+                _referenceList.Clear();
+
+                // if there is no main rule create a main rule referencing the first rule encountered
+                if (findMainRule && !_ruleSet.ContainsKey(_config.Tags.Main))
+                {
+                    _ruleSet[_config.Tags.Main] = _ruleSet[firstRuleTag];
+                }
+            }
+
+            return _ruleSet;
         }
 
         /// <summary>
