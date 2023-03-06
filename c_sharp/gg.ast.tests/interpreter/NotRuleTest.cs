@@ -36,7 +36,7 @@ namespace gg.ast.tests.interpreter
                         new Type[] { typeof(NotRule), typeof(LiteralRule) }),
 
                 ("!\"lit\" []", 3, config.Tags.Literal, config.Tags.Not,
-                        new Type[] { typeof(RepeatRule), typeof(NotRule), typeof(LiteralRule) }),
+                        new Type[] { typeof(InlineRepeatRule), typeof(NotRule), typeof(LiteralRule) }),
 
                 // expect one child here as both the not and repeat will be folded into the
                 // char rule 
@@ -50,7 +50,7 @@ namespace gg.ast.tests.interpreter
                          new Type[] { typeof(NotRule), typeof(CharRule) }),
 
                 ("!(a, b)[]", 3, config.Tags.RuleValue, config.Tags.Not,
-                         new Type[] { typeof(RepeatRule), typeof(NotRule), typeof(SequenceRule) }),
+                         new Type[] { typeof(InlineRepeatRule), typeof(NotRule), typeof(SequenceRule) }),
             };
 
             RunGreenPathTests(RuleValue(new InterpreterConfig()), examples.Select(v => v.text), (result, idx) =>

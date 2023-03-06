@@ -25,6 +25,13 @@ namespace gg.ast.core
         /// </summary>
         int Id { get; set; }
 
+        // leaving this here as documentation / reminder: rules can have multiple parents
+        // as they may be shared. So having a single parent doesn't make sense.
+        // The exception are the inline rules (reference rule, inline repeat)
+        // but they have explicit measures to prevent sharing. 
+
+        // IRule Parent { get; set; }
+
         NodeVisiblity Visibility { get; set; }
 
         /// <summary>

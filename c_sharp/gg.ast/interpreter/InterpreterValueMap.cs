@@ -181,7 +181,7 @@ namespace gg.ast.interpreter
                 ? null 
                 : CreateNotRule(config, ruleValue, node[notIndex].Tag);
 
-            RepeatRule repeatRule = repeatIndex < 0 
+            InlineRepeatRule repeatRule = repeatIndex < 0 
                 ? null 
                 : CreateRepeatRule(config, map, str, ruleValue, notRule, node[repeatIndex]);
 
@@ -222,7 +222,7 @@ namespace gg.ast.interpreter
             };
         }
         
-        private static RepeatRule CreateRepeatRule(
+        private static InlineRepeatRule CreateRepeatRule(
             InterpreterConfig config,
             ValueMap map, 
             string str,
@@ -245,7 +245,7 @@ namespace gg.ast.interpreter
             else
             {
                 // wrap the inline rule inside a repeat rule                    
-                var repeatRule = (RepeatRule)map[repeatDefinition.Tag](str, repeatDefinition);
+                var repeatRule = (InlineRepeatRule)map[repeatDefinition.Tag](str, repeatDefinition);
 
                 repeatRule.Subrule = notRule ?? ruleValue;
                 repeatRule.Visibility = NodeVisiblity.Transitive;
@@ -377,7 +377,7 @@ namespace gg.ast.interpreter
             AstNode node, 
             IRule whitespace)
         {
-            var rule = new RepeatRule()
+            var rule = new InlineRepeatRule()
             {
                 Tag = config.Tags.Repeat,
                 WhiteSpaceRule = whitespace,

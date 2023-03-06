@@ -229,8 +229,7 @@ namespace gg.ast.interpreter
             {
                 // top level rule, replace this rule in the ruleset
                 ruleSet[rule.Tag] = rule.Subrule;
-            }
-            
+            }            
             else if (rule.Parent is IRuleGroup ruleGroup)
             {
                 // replace the reference in the group with the actual rule
@@ -242,7 +241,7 @@ namespace gg.ast.interpreter
                 // if the meta rule is a repeat rule and the current reference
                 // is to a character rule, copy the repeat parameters (min, max)
                 // and replace the repeat with the char rule.
-                if (metaRule is RepeatRule repeatRule && rule.Subrule is CharRule charRule)
+                if (metaRule is InlineRepeatRule repeatRule && rule.Subrule is CharRule charRule)
                 {
                     var inlineCharRule = (CharRule) charRule.Clone();
 
