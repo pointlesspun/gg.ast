@@ -17,7 +17,7 @@ namespace gg.ast.core.rules
 
                 if (subRuleResult.IsSuccess)
                 {
-                    if (Visibility == RuleVisiblity.Visible || subRuleResult.Nodes == null)
+                    if (Visibility == NodeVisiblity.Visible || subRuleResult.Nodes == null)
                     {
                         return BuildResult(true, index, subRuleResult.CharactersRead, subRuleResult.Nodes);
                     }

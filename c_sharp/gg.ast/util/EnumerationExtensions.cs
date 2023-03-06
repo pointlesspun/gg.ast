@@ -30,5 +30,13 @@ namespace gg.ast.util
 
             return true;
         }
+
+        public static void ForEachIndexed<T>(this IEnumerable<T> enumeration, Action<T, int> action)
+        {
+            for (var i = 0; i < enumeration.Count(); i++)
+            {
+                action(enumeration.ElementAt(i), i);
+            }
+        }
     }
 }

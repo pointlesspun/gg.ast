@@ -20,7 +20,7 @@ namespace gg.ast.common
         public static IRule CreateWhitespaceRule(
             string tag = "whitespace",
             string characters = " \n\t\r", 
-            RuleVisiblity visibility = RuleVisiblity.Hidden)
+            NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             return new CharRule()
             {
@@ -36,7 +36,7 @@ namespace gg.ast.common
         public static IRule Optional(
             IRule other, 
             IRule whitespace = null, 
-            RuleVisiblity visibility = RuleVisiblity.Transitive,
+            NodeVisiblity visibility = NodeVisiblity.Transitive,
             string tag = null)
         {
             return new RepeatRule()
@@ -53,7 +53,7 @@ namespace gg.ast.common
         public static IRule ZeroOrMore(
             IRule other, 
             IRule whitespace = null,
-            RuleVisiblity visibility = RuleVisiblity.Transitive,
+            NodeVisiblity visibility = NodeVisiblity.Transitive,
             string tag = null)
         {
             return new RepeatRule()
@@ -70,7 +70,7 @@ namespace gg.ast.common
         public static IRule OneOrMore(
             IRule other,
             IRule whitespace = null,
-            RuleVisiblity visibility = RuleVisiblity.Transitive,
+            NodeVisiblity visibility = NodeVisiblity.Transitive,
             string tag = null)
         {
             return new RepeatRule()
@@ -91,7 +91,7 @@ namespace gg.ast.common
             {
                 Tag = "select from",
                 Subrules = others,
-                Visibility = RuleVisiblity.Transitive,
+                Visibility = NodeVisiblity.Transitive,
                 WhiteSpaceRule = null
             };
         }

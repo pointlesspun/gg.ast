@@ -9,7 +9,7 @@ namespace gg.ast.core.rules
     {
         public CriticalRule()
         {
-            Visibility = RuleVisiblity.Transitive;
+            Visibility = NodeVisiblity.Transitive;
         }
 
         protected override ParseResult ParseRule(string text, int index)

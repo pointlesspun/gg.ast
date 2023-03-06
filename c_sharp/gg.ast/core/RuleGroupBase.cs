@@ -22,11 +22,6 @@ namespace gg.ast.core
                 Contract.RequiresNoNullValues(value, "Cannot add null rules.");
 
                 _subrules = value;
-
-                foreach (var rule in _subrules)
-                {
-                    rule.Parent = this;
-                }
             }
         }
 

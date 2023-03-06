@@ -6,7 +6,12 @@ namespace gg.ast.core
 {
     public delegate void RuleCommitHandler(IRule rule, in ParseResult result);
 
-    public enum RuleVisiblity
+    /// <summary>
+    /// Visiblity of the produced node. Visible means the node and its children will
+    /// be visible in the AST. Transitive means only the node's children will be
+    /// visible in the AST. Hidden implies neither the node nor its children are visible.
+    /// </summary>
+    public enum NodeVisiblity
     {
         Visible,
         Transitive,
@@ -15,11 +20,16 @@ namespace gg.ast.core
 
     public interface IRule : ICloneable
     {
+        /// <summary>
+        /// Unique identifier of the rule. 
+        /// </summary>
+        int Id { get; set; }
 
-        IRule Parent { get; set; }
+        NodeVisiblity Visibility { get; set; }
 
-        RuleVisiblity Visibility { get; set; }
-
+        /// <summary>
+        /// Human readable text describing the token's tag this rule produces.
+        /// </summary>
         string Tag { get; set; }
 
         RuleCommitHandler OnCommit { get; set; }

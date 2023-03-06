@@ -15,7 +15,6 @@ namespace gg.ast.core
             {
                 Contract.Requires(value != null);   
                 _subrule = value;
-                _subrule.Parent = this;
             }
         }
 
@@ -27,13 +26,13 @@ namespace gg.ast.core
         /// <param name="rule"></param>
         /// <param name="visibility"></param>
         /// <returns></returns>
-        public MetaRuleBase Bind(IRule rule, RuleVisiblity visibility = RuleVisiblity.Transitive)
+        public MetaRuleBase Bind(IRule rule, NodeVisiblity visibility = NodeVisiblity.Transitive)
         {
             Contract.RequiresNotNull(rule);
 
             Tag ??= rule.Tag;
-            Visibility = rule.Visibility == RuleVisiblity.Hidden 
-                            ? RuleVisiblity.Hidden  
+            Visibility = rule.Visibility == NodeVisiblity.Hidden 
+                            ? NodeVisiblity.Hidden  
                             : visibility;
             Subrule = rule;
             return this;

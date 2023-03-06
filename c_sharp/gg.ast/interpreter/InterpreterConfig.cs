@@ -161,13 +161,13 @@ namespace gg.ast.interpreter
         /// </summary>
         public bool HideUnnamedRules { get; set; } = true;
 
-        public static IRule CreateWhiteSpaceRule(CommentsConfig config = null, RuleVisiblity visibility = RuleVisiblity.Hidden)
+        public static IRule CreateWhiteSpaceRule(CommentsConfig config = null, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var preprocessorConfig = config ?? new CommentsConfig();
 
             var whitespaceSelection = new OrRule()
             {
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Subrules = new IRule[]
                 {
                     CommentsRules.CreateMultilineCommentRule(preprocessorConfig, visibility: visibility),
@@ -178,7 +178,7 @@ namespace gg.ast.interpreter
 
             return new RepeatRule()
             {
-                Visibility = RuleVisiblity.Hidden,
+                Visibility = NodeVisiblity.Hidden,
                 Min = 0,
                 Max = -1,
                 Subrule = whitespaceSelection

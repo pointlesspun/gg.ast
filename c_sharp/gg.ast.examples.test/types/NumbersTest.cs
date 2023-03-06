@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.core;
 using gg.ast.interpreter;
+using gg.ast.util;
 
 namespace gg.ast.tests.interpreter
 {

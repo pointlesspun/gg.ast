@@ -371,27 +371,16 @@ Based on these concepts a number of all core rules are defined which can be used
 
 ## v 0.2
 
-* Implement interpreter in spec file
-* Export spec file to c# code
+* Create Mermaid files from RuleSets and Asts
+* Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
 * abort on failure (critical) = <"literal">;  "literal"[3]
-* Move all spec files in examples to one common directory
+* add long form for some: sequence(a,b,c), or(a,b), repeat(a, 3, 4), critical(), not(a), scan(x), move(-3), anchor("bla"), characters(any, "axsv"),
+* Implement interpreter in spec file
 * More clean up and documentation
 * Add not_in_range to characters
 
-### done
-
-* Create Mermaid files from RuleSets and Asts
-* Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
-
-### rejected
-
-* add long form for some: sequence(a,b,c), or(a,b), repeat(a, 3, 4), critical(), not(a), scan(x), move(-3), anchor("bla"), characters(any, "axsv"),
-	This should be solved by just creating a new spec file  
-
-
 ## v 0.3
 
-* Implement calculator logic (esp. operator order)
 * Add commands such as:
 	* print("smt"), print(rule + "smt" + line + ":" + column)
 	* call("function name")
@@ -410,4 +399,4 @@ Based on these concepts a number of all core rules are defined which can be used
 * Logic parser with variable and functions
 * Subset of c#
 * c# Interpreter
-* "Tiny / minimal version"
+* "Tiny version"
