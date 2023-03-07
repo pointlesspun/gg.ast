@@ -26,4 +26,4 @@ labeledDottedLine   = "-- " label " ---";
 labeledDottedArrow  = "-- " label " -->";
 label               = (`azAZ09` | ' _')*;
 
-eoln = '\n\r';
+eoln				= '\n\r';

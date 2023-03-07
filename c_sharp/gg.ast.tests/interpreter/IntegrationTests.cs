@@ -39,7 +39,7 @@ namespace gg.ast.tests.interpreter
             var result = interpreter.Parse(inputText);
 
             Assert.IsTrue(result.IsSuccess);
-            Assert.IsTrue(result.Nodes[0].Tag == "helloWorld");
+            Assert.IsTrue(result.Nodes[0].Tag == "main");
             Assert.IsTrue(result.Nodes[0].Length == inputText.Length);
         }
 
@@ -194,6 +194,8 @@ namespace gg.ast.tests.interpreter
 
             TestRepeatRule("data/helloWsAlternative.txt", inputText);
         }
+
+        
 
         private void TestRepeatRule(string filename, (string text, int childCount, int tokenCount)[] testData)
         { 

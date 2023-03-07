@@ -125,6 +125,12 @@ namespace gg.ast.interpreter
                     var subrule = map.Map<IRule>(str, value);
                     subrules[idx] = subrule;
 
+                    if (subrule is ReferenceRule refRule)
+                    {
+                        refRule.Parent = rule;
+                    } 
+                        
+
                     // if the subrule is not a reference, make it hidden 
                     // (that's "how" this is meant to work) 
                     if (config.HideUnnamedRules && IsUnnamedRule(subrule))
@@ -181,7 +187,7 @@ namespace gg.ast.interpreter
                 ? null 
                 : CreateNotRule(config, ruleValue, node[notIndex].Tag);
 
-            InlineRepeatRule repeatRule = repeatIndex < 0 
+            RepeatRule repeatRule = repeatIndex < 0 
                 ? null 
                 : CreateRepeatRule(config, map, str, ruleValue, notRule, node[repeatIndex]);
 
@@ -213,16 +219,23 @@ namespace gg.ast.interpreter
                     return null;
                 }
             }
-            
-            return new NotRule()
+
+            var notRule = new NotRule()
             {
                 Subrule = ruleValue,
                 Visibility = NodeVisiblity.Transitive,
                 Skip = tag == config.Tags.NotAndSkip ? 1 : 0
             };
+
+            if (ruleValue is ReferenceRule refRule)
+            {
+                refRule.Parent = notRule;
+            }
+
+            return notRule;
         }
         
-        private static InlineRepeatRule CreateRepeatRule(
+        private static RepeatRule CreateRepeatRule(
             InterpreterConfig config,
             ValueMap map, 
             string str,
@@ -245,10 +258,16 @@ namespace gg.ast.interpreter
             else
             {
                 // wrap the inline rule inside a repeat rule                    
-                var repeatRule = (InlineRepeatRule)map[repeatDefinition.Tag](str, repeatDefinition);
+                var repeatRule = (RepeatRule)map[repeatDefinition.Tag](str, repeatDefinition);
 
                 repeatRule.Subrule = notRule ?? ruleValue;
                 repeatRule.Visibility = NodeVisiblity.Transitive;
+
+                if (repeatRule.Subrule is ReferenceRule repeatRefRule)
+                {
+                    repeatRefRule.Parent = repeatRule;
+                }
+
                 return repeatRule;
             }
         }
@@ -377,7 +396,7 @@ namespace gg.ast.interpreter
             AstNode node, 
             IRule whitespace)
         {
-            var rule = new InlineRepeatRule()
+            var rule = new RepeatRule()
             {
                 Tag = config.Tags.Repeat,
                 WhiteSpaceRule = whitespace,

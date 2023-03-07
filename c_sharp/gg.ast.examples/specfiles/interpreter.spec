@@ -19,8 +19,7 @@ unaryValue				= not? (literal | identifier | charRule | grouping) repeat?;
 
 not						= "!"; 
 
-// xxx should be able to state literal = string
-literal					= '"' ( ("\\" $) | !'"\\'+ )* '"';
+literal					= string; 
 
 charRule				= charRule.any | charRule.enumeration | charRule.range;
 charRule.any			= "$" | "any";

@@ -183,7 +183,6 @@ namespace gg.ast.interpreter
             };
         }
 
-
         /// <summary>
         /// Create a "loose" rule to match identifiers. Identifiers can be anything
         /// made out of alphanumeric and _ or @ characters.

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="data\groupReference.spec" />
     <None Remove="data\helloOr.txt" />
     <None Remove="data\helloReference.txt" />
     <None Remove="data\helloRepeatedSequence.txt" />
@@ -15,11 +16,30 @@
     <None Remove="data\helloSequenceNoSeparator.txt" />
     <None Remove="data\helloSequenceWithComments.txt" />
     <None Remove="data\helloWsAlternative.txt" />
+    <None Remove="data\multiReference.spec" />
+    <None Remove="data\repeatSubstitution.spec" />
+    <None Remove="data\reverseInline.spec" />
+    <None Remove="data\singleInlineReference.spec" />
     <None Remove="util\json.spec" />
     <None Remove="util\mermaid.spec" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="data\multiReference.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\reverseInline.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\repeatSubstitution.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\groupReference.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\singleInlineReference.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\helloWsAlternative.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

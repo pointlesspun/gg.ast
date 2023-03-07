@@ -2,6 +2,7 @@
 
 using gg.ast.core;
 using gg.ast.util;
+using System;
 
 namespace gg.ast.interpreter
 {
@@ -23,11 +24,28 @@ namespace gg.ast.interpreter
             }
         }
 
+        public override IRule Subrule
+        {
+            get => _subrule;
+            set
+            {
+                Contract.Requires(value != null);
+                _subrule = value;
+
+                if (_subrule is ReferenceRule childRule)
+                {
+                    childRule.Parent = this;
+                }
+            }
+        }
+
+
         public string Reference { get; set; }
 
         protected override ParseResult ParseRule(string text, int index)
         {
-            return Subrule.Parse(text, index);
+            throw new NotImplementedException("Reference rule should have been inlined...");
+            //return Subrule.Parse(text, index);
         }
 
         // do not deep clone...

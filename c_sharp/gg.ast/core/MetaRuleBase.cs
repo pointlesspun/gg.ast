@@ -8,7 +8,7 @@ namespace gg.ast.core
     {
         protected IRule _subrule;
 
-        public IRule Subrule 
+        public virtual IRule Subrule 
         { 
             get => _subrule; 
             set
