@@ -41,7 +41,7 @@ namespace gg.ast.common
                         Max = 1,
                         Min = 1,
                         MatchCharacters = CharRule.MatchType.InEnumeration,
-                        Characters = "nrtve\"\\"
+                        Characters = "'nrtve\"\\"
                     }
                 }
             };

@@ -78,11 +78,11 @@ namespace gg.ast.interpreter
 
             public string RuleSeparator { get; set; } = "rule separator";
 
-            public string MatchAnyCharacter { get; set; } = "match any character";
+            public string MatchAnyCharacter { get; set; } = "charRule.any";
 
-            public string MatchCharactersInRange { get; set; } = "match characters in range";
+            public string MatchCharactersInRange { get; set; } = "charRule.range";
 
-            public string MatchCharactersInEnumeration { get; set; } = "match characters in enumeration";
+            public string MatchCharactersInEnumeration { get; set; } = "charRule.enumeration";
 
             public string Not { get; set; } = "not";
 

@@ -6,7 +6,7 @@ interpreter				= usingStatements, ruleList;
 
 usingStatements			= ("using", string, ";")*;
 
-ruleList				= rule*;
+ruleList				= rule[];
 rule					= visibility?, identifier, "=", ruleValue, ";";
 
 visibility				= "#";
@@ -21,10 +21,17 @@ not						= "!";
 
 literal					= string; 
 
-charRule				= charRule.any | charRule.enumeration | charRule.range;
+# charRule				= charRule.any | charRule.enumeration | charRule.range;
 charRule.any			= "$" | "any";
-charRule.enumeration	= "'" $+ "'";
-charRule.range			= "`" $+ "'";
+charRule.enumeration	= "'" enumeration.chars "'";
+charRule.range			= "`" range.chars "`";
+
+# enumeration.chars		= ( escape | endOfEnumerationChars )+;
+# endOfEnumerationChars	= !'\'\\'+;
+
+# range.chars			= ( escape | endOfRangeChars )+;
+# endOfRangeChars		= !'`\\'+;
+
 
 grouping				= "(", (ruleValue, (",", ruleValue)*)?, ")";
 
@@ -44,4 +51,3 @@ or						= unaryValue, "|", unaryValue, ("|", unaryValue)*;
 sequenceNoSeparator		= unaryValue whitespace unaryValue (whitespace unaryValue)*;
 
 identifier				= (`azAZ` | "_") (`azAZ09` | "_")*;
-
