@@ -4,7 +4,7 @@
  * Rules to parse hexadecimal numbers, integers, decimals, exponents and their superset: numbers.
  */
 
-number = hex | exponent | decimal | integer;
+number			= hex | exponent | decimal | integer;
 exponent		= (integer 'eE' integer) | (decimal 'eE' integer);
 decimal			= integer "." numberString; 
 integer			= sign? numberString;

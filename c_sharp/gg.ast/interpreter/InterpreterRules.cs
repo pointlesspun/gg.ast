@@ -255,7 +255,7 @@ namespace gg.ast.interpreter
 
             return new SequenceRule()
             {
-                Tag = config.Tags.Group,
+                Tag = config.Tags.Grouping,
                 Visibility = visibility,
                 WhiteSpaceRule = config.WhiteSpace,
                 Subrules = new IRule[]

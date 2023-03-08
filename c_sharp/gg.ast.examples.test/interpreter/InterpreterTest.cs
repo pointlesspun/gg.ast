@@ -314,5 +314,58 @@ namespace gg.ast.examples.test.interpreter
             Assert.IsTrue(result.CharactersRead == text.Length);
             Assert.IsTrue(result.Nodes[0].Tag == "altComment");
         }
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void NumbersInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+            var specFile = File.ReadAllText("./specfiles/numbers.spec");
+            var numbersSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(numbersSpecFileRules.Count == 11);
+
+            var number = numbersSpecFileRules["number"];
+            var numberTexts = new string[] { "1", "-1", "0.1", "-69.42", "123e456", "12.32E-129" };
+
+            foreach ( var text in numberTexts )
+            {
+                var result = number.Parse(text);
+
+                Assert.IsTrue(result.IsSuccess);
+                Assert.IsTrue(result.CharactersRead == text.Length);
+                Assert.IsTrue(result.Nodes[0].Tag == "number");
+            }            
+        }
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void TypesInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+            var specFile = File.ReadAllText("./specfiles/types.spec");
+            var typesSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(typesSpecFileRules.Count == 18);
+
+            var number = typesSpecFileRules["typeValue"];
+            var testData = new (string text, string tag)[] { 
+                ("12.32E-129", "number"),
+                ("true", "boolean"),
+                ("null", "null"),
+                ("\"string\"", "string")
+            };
+
+            foreach (var (text, tag) in testData)
+            {
+                var result = number.Parse(text);
+
+                Assert.IsTrue(result.IsSuccess);
+                Assert.IsTrue(result.CharactersRead == text.Length);
+                Assert.IsTrue(result.Nodes[0].Tag == tag);
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@ charRule.range				= "`" range.chars "`";
 # range.chars				= ( escape | endOfRangeChars )+;
 # endOfRangeChars			= !'`\\'+;
 
-grouping					= "(", (ruleValue, (",", ruleValue)*)?, ")";
+# grouping					= "(", (ruleValue, (",", ruleValue)*)?, ")";
 
 # repeat					= repeat.ws | repeat.noWs;
 

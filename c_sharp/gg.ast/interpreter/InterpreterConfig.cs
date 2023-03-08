@@ -16,7 +16,6 @@ namespace gg.ast.interpreter
 
             public string Interpreter { get; set; } = "intepreter";
 
-
             public string Identifier { get; set; } = "identifier";
 
             public string RuleList { get; set; } = "ruleList";
@@ -69,7 +68,7 @@ namespace gg.ast.interpreter
             
             public string RepeatBetweenNandM { get; set; } = "repeat.betweenNandM";
 
-            public string Group { get; set; } = "group";
+            public string Grouping { get; set; } = "grouping";
 
             public string BeginGroup { get; set; } = "begin group";
 
