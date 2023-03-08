@@ -19,15 +19,17 @@ namespace gg.ast.interpreter
         /// <param name="config"></param>
         /// <param name="existingValueMap"></param>
         /// <param name="referenceRuleList">Stores all reference rules created via this valuemap. This way
-        /// reference rules can easily be retrieved and resolved at a later time. xxx why is this a required
+        /// reference rules can easily be retrieved and resolved at a later time. 
         /// parameter</param>
         /// <returns></returns>
         public static ValueMap CreateValueMap(
             InterpreterConfig config,
-            List<ReferenceRule> referenceRuleList,
+            List<ReferenceRule> referenceRuleList = null,
             ValueMap existingValueMap = null)
         {
             var interpreterValueMap = existingValueMap ?? TypeRules.CreateValueMap();
+
+            referenceRuleList ??= new List<ReferenceRule>();
 
             interpreterValueMap[config.Tags.RuleTag] = (str, node) =>
                 str.AsSpan(node.StartIndex, node.Length).ToString();
