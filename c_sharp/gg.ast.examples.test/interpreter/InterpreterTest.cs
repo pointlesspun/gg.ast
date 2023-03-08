@@ -31,18 +31,18 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void ParseInterpreterTest()
         {
-            var testFilesDirectories = new string[] 
-            { 
+            var testFilesDirectories = new string[]
+            {
                 "./introduction",
                 "./specfiles"
             };
             var interpreter = CreateInterpreter();
 
-            foreach (var directoryName in testFilesDirectories) 
+            foreach (var directoryName in testFilesDirectories)
             {
                 var specFiles = Directory.EnumerateFiles(directoryName)
                                     .Where(filename => filename.IndexOf(".spec") >= 0);
-               
+
                 foreach (var file in specFiles)
                 {
                     var text = File.ReadAllText(file);
@@ -62,7 +62,7 @@ namespace gg.ast.examples.test.interpreter
             var interpreter = CreateInterpreter();
 
             var text = File.ReadAllText("./introduction/hello_world.spec");
-            
+
             var helloWorldRule = new ParserFactory().ParseRules(interpreter, text)["helloWorld"];
 
             var helloWorldText = "hello world";
@@ -105,13 +105,13 @@ namespace gg.ast.examples.test.interpreter
             {
                 Assert.IsTrue(anyCharacter.Parse("" + (char)i).IsSuccess);
             }
-    
+
             Assert.IsFalse(anyCharacter.Parse("").IsSuccess);
 
             Assert.IsTrue(aToZSet.Parse("a").IsSuccess);
             Assert.IsTrue(aToZSet.Parse("h").IsSuccess);
             Assert.IsTrue(aToZSet.Parse("z").IsSuccess);
-            
+
             Assert.IsFalse(aToZSet.Parse("A").IsSuccess);
             Assert.IsFalse(aToZSet.Parse("Z").IsSuccess);
             Assert.IsFalse(aToZSet.Parse("0").IsSuccess);
@@ -153,14 +153,14 @@ namespace gg.ast.examples.test.interpreter
             var valueMap = InterpreterValueMap.CreateValueMap(config, new List<ReferenceRule>());
             var testData = new (string text, string tag, int min, int max, bool acceptsWhitespace)[]
             {
-                ("ref[ 3 ]", "repeat.ws", 3, 3, true), 
+                ("ref[ 3 ]", "repeat.ws", 3, 3, true),
                 ("ref[]", "repeat.ws", -1, -1, true),
-                ("ref[ .. 1]", "repeat.ws", -1, 1, true), 
+                ("ref[ .. 1]", "repeat.ws", -1, 1, true),
                 ("ref [1..]", "repeat.ws", 1, -1, true),
                 ("ref  [1..2]", "repeat.ws", 1, 2, true),
-                ("ref<>", "repeat.noWs", -1, -1, false), 
-                ("ref <..1>", "repeat.noWs", -1, 1, false), 
-                ("ref<1..2>", "repeat.noWs", 1, 2, false), 
+                ("ref<>", "repeat.noWs", -1, -1, false),
+                ("ref <..1>", "repeat.noWs", -1, 1, false),
+                ("ref<1..2>", "repeat.noWs", 1, 2, false),
                 ("ref  <3>", "repeat.noWs", 3, 3, false),
                 ("ref?", "repeat.noWs", -1, 1, false),
                 ("ref +", "repeat.noWs", 1, -1, false),
@@ -171,7 +171,7 @@ namespace gg.ast.examples.test.interpreter
             {
                 var (str, tag, min, max, acceptsWhitespace) = tuple;
                 var result = charRule.Parse(str);
-                
+
                 Assert.IsTrue(result.IsSuccess);
                 Assert.IsTrue(result.CharactersRead == str.Length);
 
@@ -231,14 +231,14 @@ namespace gg.ast.examples.test.interpreter
 
             var twoNoWs = repeatSpecFileRules["explicitNoWs.two"];
             var result = twoNoWs.Parse(text + text + text);
-            
+
             Assert.IsTrue(result.IsSuccess);
             Assert.IsTrue(result.CharactersRead == text.Length * 2);
 
             Assert.IsFalse(twoNoWs.Parse(invalidText).IsSuccess);
 
             var zeroOrOne = repeatSpecFileRules["zeroOrOne"];
-            
+
             result = zeroOrOne.Parse(text + text + text);
 
             Assert.IsTrue(result.IsSuccess);
@@ -248,7 +248,71 @@ namespace gg.ast.examples.test.interpreter
 
             Assert.IsTrue(result.IsSuccess);
             Assert.IsTrue(result.CharactersRead == 0);
+        }
 
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void OrInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+
+            var specFile = File.ReadAllText("./introduction/or.spec");
+            var orSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(orSpecFileRules.Count == 9);
+
+            var correctResult = orSpecFileRules["correctResult"];
+
+            var testData = new string[] { "1 * 2", "3", "4 - 5" };
+
+            foreach (var text in testData)
+            {
+                var result = correctResult.Parse(text);
+
+                Assert.IsTrue(result.IsSuccess);
+                Assert.IsTrue(result.CharactersRead == text.Length);
+                Assert.IsTrue(result.Nodes[0].Tag == "operation" || result.Nodes[0].Tag == "value");
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void SequenceInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+            var specFile = File.ReadAllText("./introduction/sequences.spec");
+            var sequenceSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(sequenceSpecFileRules.Count == 7);
+
+            var helloRule = sequenceSpecFileRules["helloSpaciousWorld"];
+            var result = helloRule.Parse("hello   world");
+
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result.Nodes[0].Tag == "helloSpaciousWorld");            
+        }
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void NotInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+            var specFile = File.ReadAllText("./introduction/not.spec");
+            var notSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(notSpecFileRules.Count == 11);
+
+            var altComment = notSpecFileRules["altComment"];
+            var text = "/* this is a comment */";
+
+            var result = altComment.Parse(text);
+
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result.CharactersRead == text.Length);
+            Assert.IsTrue(result.Nodes[0].Tag == "altComment");
         }
     }
 }

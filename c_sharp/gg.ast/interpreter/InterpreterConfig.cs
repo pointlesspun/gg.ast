@@ -41,13 +41,13 @@ namespace gg.ast.interpreter
 
             public string Sequence { get; set; } = "sequence";
 
-            public string SequenceWithoutSeparator { get; set; } = "sequence without separator";
+            public string SequenceWithoutSeparator { get; set; } = "sequenceNoSeparator";
 
             public string SequenceSeparator { get; set; } = "sequence separator";
             
-            public string Or { get; set; } = "or-rule";
+            public string Or { get; set; } = "or";
             
-            public string OrSeparator { get; set; } = "or-rule separator";
+            public string OrSeparator { get; set; } = "or separator";
             
             public string Repeat { get; set; } = "repeat.ws";
 
@@ -87,7 +87,7 @@ namespace gg.ast.interpreter
 
             public string Not { get; set; } = "not";
 
-            public string NotAndSkip { get; set; } = "not&skip";
+            public string NotAndSkip { get; set; } = "notAndSkip";
 
             public string Whitespace { get; set; } = "whitespace";
 

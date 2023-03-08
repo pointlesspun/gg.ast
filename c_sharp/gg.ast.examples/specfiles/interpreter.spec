@@ -13,11 +13,13 @@ visibility					= "#";
 
 ruleValue					= groupType | unaryValue;
 
-groupType					= sequence | or | sequenceNoSeparator;
+# groupType					= sequence | or | sequenceNoSeparator;
 
-unaryValue					= not?, (literal | ruleReference | charRule | grouping), repeat?;
+unaryValue					= notType?, (literal | ruleReference | charRule | grouping), repeat?;
 
-not							= '!~'; 
+# notType					= (not | notAndSkip);
+not							= "!"; 
+notAndSkip					= "~";
 
 literal						= string; 
 ruleReference				= identifier;

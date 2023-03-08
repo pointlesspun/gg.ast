@@ -95,7 +95,6 @@ namespace gg.ast.interpreter
             referenceRuleList.Add(result);
 
             return result;
-
         }
 
         private static IRule CreateLiteralRule(string str, AstNode node) 
