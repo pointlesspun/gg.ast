@@ -1,19 +1,30 @@
-﻿using gg.ast.core;
-using gg.ast.interpreter;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
+﻿
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using gg.ast.interpreter;
+using gg.ast.core;
+using System.Collections.Generic;
+using gg.ast.util;
+using gg.ast.core.rules;
 
 namespace gg.ast.examples.test.interpreter
 {
     [TestClass]
     public class InterpreterTest
     {
+        private static Dictionary<string, IRule> ReadInterpreterSpec()
+        {
+            return new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
+        }
+
+        private static IRule CreateInterpreter()
+        {
+            return ReadInterpreterSpec()["interpreter"];
+        }
+
         /// <summary>
         /// Parse all known spec files with the interpreter spec file
         /// </summary>
@@ -25,8 +36,7 @@ namespace gg.ast.examples.test.interpreter
                 "./introduction",
                 "./specfiles"
             };
-            var rules = new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
-            var interpreter = rules["interpreter"];
+            var interpreter = CreateInterpreter();
 
             foreach (var directoryName in testFilesDirectories) 
             {
@@ -49,8 +59,7 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void CreateHelloWorldInterpreterTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
-            var interpreter = rules["interpreter"];
+            var interpreter = CreateInterpreter();
 
             var text = File.ReadAllText("./introduction/hello_world.spec");
             
@@ -69,8 +78,7 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void CharRuleInterpreterTest()
         {
-            var interpreterRules = new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
-            var charRule = interpreterRules["charRule"];
+            var charRule = ReadInterpreterSpec()["charRule"];
 
             Assert.IsTrue(charRule.Parse("`abc`").IsSuccess);
             Assert.IsTrue(charRule.Parse("'abc'").IsSuccess);
@@ -83,7 +91,7 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void CharSetInterpreterTest()
         {
-            var interpreter = new ParserFactory().ParseFileRules("./specfiles/interpreter.spec")["interpreter"];
+            var interpreter = CreateInterpreter();
 
             var specFile = File.ReadAllText("./introduction/charsets.spec");
             var specFileRules = new ParserFactory().ParseRules(interpreter, specFile);
@@ -134,6 +142,113 @@ namespace gg.ast.examples.test.interpreter
             Assert.IsTrue(notABCEnumeration.Parse("d").IsSuccess);
             Assert.IsTrue(notABCEnumeration.Parse("A").IsSuccess);
             Assert.IsTrue(notABCEnumeration.Parse("C").IsSuccess);
+        }
+
+
+        [TestMethod]
+        public void UnaryRepeatRuleInterpreterTest()
+        {
+            var charRule = ReadInterpreterSpec()["unaryValue"];
+            var config = new InterpreterConfig();
+            var valueMap = InterpreterValueMap.CreateValueMap(config, new List<ReferenceRule>());
+            var testData = new (string text, string tag, int min, int max, bool acceptsWhitespace)[]
+            {
+                ("ref[ 3 ]", "repeat.ws", 3, 3, true), 
+                ("ref[]", "repeat.ws", -1, -1, true),
+                ("ref[ .. 1]", "repeat.ws", -1, 1, true), 
+                ("ref [1..]", "repeat.ws", 1, -1, true),
+                ("ref  [1..2]", "repeat.ws", 1, 2, true),
+                ("ref<>", "repeat.noWs", -1, -1, false), 
+                ("ref <..1>", "repeat.noWs", -1, 1, false), 
+                ("ref<1..2>", "repeat.noWs", 1, 2, false), 
+                ("ref  <3>", "repeat.noWs", 3, 3, false),
+                ("ref?", "repeat.noWs", -1, 1, false),
+                ("ref +", "repeat.noWs", 1, -1, false),
+                ("ref  *", "repeat.noWs",-1, -1, false)
+            };
+
+            testData.ForEachIndexed((tuple, idx) =>
+            {
+                var (str, tag, min, max, acceptsWhitespace) = tuple;
+                var result = charRule.Parse(str);
+                
+                Assert.IsTrue(result.IsSuccess);
+                Assert.IsTrue(result.CharactersRead == str.Length);
+
+                var node = result.Nodes[0];
+
+                Assert.IsTrue(node.Children.Count == 2);
+                Assert.IsTrue(node[0].Tag == "ruleReference");
+                Assert.IsTrue(node[1].Tag == tag);
+
+                var repeatRule = valueMap.Map<RepeatRule>(str, node);
+
+                Assert.IsTrue(repeatRule.Min == min);
+                Assert.IsTrue(repeatRule.Max == max);
+
+                Assert.IsTrue((repeatRule.WhiteSpaceRule != null) == acceptsWhitespace);
+            });
+        }
+
+        [TestMethod]
+        public void RuleRepeatRuleInterpreterTest()
+        {
+            var charRule = ReadInterpreterSpec()["rule"];
+            var testData = new string[]
+            {
+                "a=ref[];", "a =ref[ .. 1];", "a  = ref [1..];", "a= ref  [1..2];", " a  = ref[ 3 ];",
+                "a = ref<>;", "a=ref <..1>;", "  a =ref<1..2>;", "a =ref  <3>;",
+                "a = ref?;", "a = ref +;", "a=ref  *;"
+            };
+
+            testData.ForEachIndexed((str, _) =>
+            {
+                var result = charRule.Parse(str);
+                Assert.IsTrue(result.IsSuccess);
+                Assert.IsTrue(result.CharactersRead == str.Length);
+                Assert.IsTrue(result.Nodes[0].Children.Count == 2);
+                Assert.IsTrue(result.Nodes[0][0].Tag == "identifier");
+                Assert.IsTrue(result.Nodes[0][1].Tag == "ruleValue");
+            });
+        }
+
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void RepeatInterpreterTest()
+        {
+            var interpreter = CreateInterpreter();
+
+            var specFile = File.ReadAllText("./introduction/repeat.spec");
+            var repeatSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(repeatSpecFileRules.Count == 17);
+
+            // do some spot checks
+            var text = "hello world";
+            var invalidText = "hi weld";
+
+            var twoNoWs = repeatSpecFileRules["explicitNoWs.two"];
+            var result = twoNoWs.Parse(text + text + text);
+            
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result.CharactersRead == text.Length * 2);
+
+            Assert.IsFalse(twoNoWs.Parse(invalidText).IsSuccess);
+
+            var zeroOrOne = repeatSpecFileRules["zeroOrOne"];
+            
+            result = zeroOrOne.Parse(text + text + text);
+
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result.CharactersRead == text.Length);
+
+            result = zeroOrOne.Parse(invalidText);
+
+            Assert.IsTrue(result.IsSuccess);
+            Assert.IsTrue(result.CharactersRead == 0);
+
         }
     }
 }

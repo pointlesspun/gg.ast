@@ -2,52 +2,61 @@
 
 using "./specfiles/types.spec";
 
-interpreter				= usingStatements, ruleList;
+interpreter					= usingStatements, ruleList;
 
-usingStatements			= ("using", string, ";")*;
+usingStatements				= ("using", string, ";")*;
 
-ruleList				= rule[];
-rule					= visibility?, identifier, "=", ruleValue, ";";
+ruleList					= rule[];
+rule						= visibility?, identifier, "=", ruleValue, ";";
 
-visibility				= "#";
+visibility					= "#";
 
-ruleValue				= groupType | unaryValue;
+ruleValue					= groupType | unaryValue;
 
-groupType				= sequence | or | sequenceNoSeparator;
+groupType					= sequence | or | sequenceNoSeparator;
 
-unaryValue				= not? (literal | identifier | charRule | grouping) repeat?;
+unaryValue					= not?, (literal | ruleReference | charRule | grouping), repeat?;
 
-not						= "!"; 
+not							= '!~'; 
 
-literal					= string; 
+literal						= string; 
+ruleReference				= identifier;
 
-# charRule				= charRule.any | charRule.enumeration | charRule.range;
-charRule.any			= "$" | "any";
-charRule.enumeration	= "'" enumeration.chars "'";
-charRule.range			= "`" range.chars "`";
+# charRule					= charRule.any | charRule.enumeration | charRule.range;
+charRule.any				= "$" | "any";
+charRule.enumeration		= "'" enumeration.chars "'";
+charRule.range				= "`" range.chars "`";
 
-# enumeration.chars		= ( escape | endOfEnumerationChars )+;
-# endOfEnumerationChars	= !'\'\\'+;
+# enumeration.chars			= ( escape | endOfEnumerationChars )+;
+# endOfEnumerationChars		= !'\'\\'+;
 
-# range.chars			= ( escape | endOfRangeChars )+;
-# endOfRangeChars		= !'`\\'+;
+# range.chars				= ( escape | endOfRangeChars )+;
+# endOfRangeChars			= !'`\\'+;
 
+grouping					= "(", (ruleValue, (",", ruleValue)*)?, ")";
 
-grouping				= "(", (ruleValue, (",", ruleValue)*)?, ")";
+# repeat					= repeat.ws | repeat.noWs;
 
-repeat					= repeat.qualified | repeat.unary;
-repeat.qualified		= repeat.betweenNandM | repeat.nOrMore | repeat.noMoreThanM | repeat.exact | repeat.zeroOrMore;
+repeat.ws					= "[", repeat.specification, "]";
 
-repeat.zeroOrMore		= "[", "]";
-repeat.nOrMore			= "[", integer, "..", "]";
-repeat.noMoreThanM		= "[", "..", integer, "]";
-repeat.betweenNandM		= "[", integer, "..", integer, "]";
-repeat.exact			= "[", integer, "]";
+repeat.noWs					= ("<", repeat.specification, ">") | repeat.unary;
 
-repeat.unary			= "+" | "*" | "?";
+# repeat.specification		= repeat.betweenNandM | repeat.nOrMore | repeat.noMoreThanM | repeat.exact | repeat.zeroOrMore;
 
-sequence				= unaryValue, ",", unaryValue, (",", unaryValue)*;
-or						= unaryValue, "|", unaryValue, ("|", unaryValue)*;
-sequenceNoSeparator		= unaryValue whitespace unaryValue (whitespace unaryValue)*;
+repeat.zeroOrMore			= whitespace;
+repeat.nOrMore				= integer, "..";
+repeat.noMoreThanM			= "..", integer;
+repeat.betweenNandM			= integer, "..", integer;
+repeat.exact				= integer;
 
-identifier				= (`azAZ` | "_") (`azAZ09` | "_")*;
+# repeat.unary				= repeat.unary.zeroOrMore | repeat.unary.oneOrMore | repeat.unary.zeroOrOne;
+
+repeat.unary.zeroOrMore		= "*";
+repeat.unary.oneOrMore		= "+";
+repeat.unary.zeroOrOne		= "?";
+
+sequence					= unaryValue, ",", unaryValue, (",", unaryValue)*;
+or							= unaryValue, "|", unaryValue, ("|", unaryValue)*;
+sequenceNoSeparator			= unaryValue whitespace unaryValue (whitespace unaryValue)*;
+
+identifier					= (`azAZ` | "_") (`azAZ09` | '_.' )*;

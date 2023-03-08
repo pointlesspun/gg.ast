@@ -49,24 +49,25 @@ namespace gg.ast.interpreter
             
             public string OrSeparator { get; set; } = "or-rule separator";
             
-            public string Repeat { get; set; } = "repeat";
+            public string Repeat { get; set; } = "repeat.ws";
 
-            public string RepeatNoWhitespace { get; set; } = "repeat no whitespace";
+            public string RepeatNoWhitespace { get; set; } = "repeat.noWs";
 
-            public string RepeatExact { get; set; } = "repeat exactly N";
+            public string RepeatExact { get; set; } = "repeat.exact";
             
-            public string RepeatZeroOrMore { get; set; } = "repeat zero or more";
+            public string RepeatZeroOrMore { get; set; } = "repeat.zeroOrMore";
 
-            public string RepeatZeroOrOne { get; set; } = "zero or one";
+            public string RepeatUnaryZeroOrMore { get; set; } = "repeat.unary.zeroOrMore";
 
+            public string RepeatZeroOrOne { get; set; } = "repeat.unary.zeroOrOne";
 
-            public string RepeatOneOrMore = "repeat one or more";
+            public string RepeatOneOrMore { get; set; } = "repeat.unary.oneOrMore";
             
-            public string RepeatNOrMore { get; set; } = "repeat N or more";
+            public string RepeatNOrMore { get; set; } = "repeat.nOrMore";
             
-            public string RepeatNoMoreThanN { get; set; } = "repeat no more than N";
+            public string RepeatNoMoreThanN { get; set; } = "repeat.noMoreThanM";
             
-            public string RepeatBetweenNandM { get; set; } = "repeat between N and M";
+            public string RepeatBetweenNandM { get; set; } = "repeat.betweenNandM";
 
             public string Group { get; set; } = "group";
 

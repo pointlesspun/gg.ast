@@ -20,7 +20,8 @@ namespace gg.ast.common
             public static readonly string Sign = "sign";
             public static readonly string NumberString = "number string";
             public static readonly string Number = "number";
-            public static readonly string Integer = "int";
+            public static readonly string Int   = "int";
+            public static readonly string Integer = "integer";
             public static readonly string Decimal = "decimal";
             public static readonly string Exponent = "exponent";
             public static readonly string Boolean = "boolean";
@@ -46,12 +47,14 @@ namespace gg.ast.common
         {
             var result = map ?? new ValueMap();
 
-            result[Tags.Integer] = (str, node) => int.Parse(str.AsSpan(node.StartIndex, node.Length));
-            result[Tags.Decimal] = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
-            result[Tags.Exponent] = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
-            result[Tags.String] = (str, node) => str.AsSpan(node.StartIndex+1, node.Length-2).ToString();
-            result[Tags.Boolean] = (str, node) => bool.Parse(str.AsSpan(node.StartIndex, node.Length));
-            result[Tags.Number] = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
+            // xxx not sure how both Int and Integer made it in...
+            result[Tags.Int]        = (str, node) => int.Parse(str.AsSpan(node.StartIndex, node.Length));
+            result[Tags.Integer]    = (str, node) => int.Parse(str.AsSpan(node.StartIndex, node.Length));
+            result[Tags.Decimal]    = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
+            result[Tags.Exponent]   = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
+            result[Tags.String]     = (str, node) => str.AsSpan(node.StartIndex+1, node.Length-2).ToString();
+            result[Tags.Boolean]    = (str, node) => bool.Parse(str.AsSpan(node.StartIndex, node.Length));
+            result[Tags.Number]     = (str, node) => double.Parse(str.AsSpan(node.StartIndex, node.Length));
 
             return result;
         }
