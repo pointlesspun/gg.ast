@@ -371,13 +371,13 @@ Based on these concepts a number of all core rules are defined which can be used
 
 ## v 0.2
 
-* abort on failure (critical) = <"literal">;  "literal"[3]
-* Implement interpreter in spec file
+
 * More clean up and documentation
 * Add not_in_range to characters
 
 ### done
 
+* Implement interpreter in spec file
 * Create Mermaid files from RuleSets and Asts
 * Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
 
@@ -388,15 +388,18 @@ Based on these concepts a number of all core rules are defined which can be used
 
 ## v 0.3
 
-* Add commands such as:
-	* print("smt"), print(rule + "smt" + line + ":" + column)
-	* call("function name")
-	* exit(123)
-* Add regex rule
+* abort on failure (critical) = {"literal"};  {literal"[3]}
 * Improve Error handling / reporting
+
 
 ## Beyond v0.3
 
+* Export interpreter spec to code
+* Add commands such as:
+	* .print("smt"), .print(rule "smt" line ":" column)
+	* .call("function name")
+	* .exit(123)
+* Add regex rule
 * Implement MD parsing example
 * Functions and variables examples
 * Calculator with variables and functions example
@@ -406,4 +409,4 @@ Based on these concepts a number of all core rules are defined which can be used
 * Logic parser with variable and functions
 * Subset of c#
 * c# Interpreter
-* "Tiny version"
+* "Minimal version"

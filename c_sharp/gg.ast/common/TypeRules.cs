@@ -73,7 +73,7 @@ namespace gg.ast.common
             {
                 Tag = Tags.HexString,
                 Visibility = isHidden,
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Characters = "afAF09",
                 Min = min,
                 Max = max,

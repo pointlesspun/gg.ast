@@ -208,7 +208,7 @@ namespace gg.ast.interpreter
             {
                 Tag = "alphanumeric",
                 Characters = "azAZ09",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Visibility = NodeVisiblity.Hidden
             };
 

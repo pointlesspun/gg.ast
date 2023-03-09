@@ -275,11 +275,11 @@ namespace gg.ast.util
         {
             string match = rule.MatchCharacters switch
             {
-                CharRule.MatchType.InRange => "range",
                 CharRule.MatchType.Any => "$",
-                CharRule.MatchType.InMultiRange => "range",
+                CharRule.MatchType.InRange => "range",
                 CharRule.MatchType.InEnumeration => "enum",
                 CharRule.MatchType.NotInEnumeration => "not in enum",
+                CharRule.MatchType.NotInRange  => "not in range",
                 _ => ""
             };
 

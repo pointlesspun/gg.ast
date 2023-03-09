@@ -26,7 +26,7 @@ namespace gg.ast.examples.introduction
             return new CharRule()
             {
                 Tag = "aToZSet",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Characters = "az"
             };
         }
@@ -36,7 +36,7 @@ namespace gg.ast.examples.introduction
             return new CharRule()
             {
                 Tag = "wideSet",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Characters = "azAZ09"
             };
         }

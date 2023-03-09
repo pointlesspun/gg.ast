@@ -53,7 +53,7 @@ namespace gg.ast.interpreter
                 CreateCharRule(config, str, node, CharRule.MatchType.Any);
 
             interpreterValueMap[config.Tags.MatchCharactersInRange] = (str, node) =>
-                CreateCharRule(config, str, node, CharRule.MatchType.InMultiRange);
+                CreateCharRule(config, str, node, CharRule.MatchType.InRange);
 
             interpreterValueMap[config.Tags.MatchCharactersInEnumeration] = (str, node) =>
                 CreateCharRule(config, str, node, CharRule.MatchType.InEnumeration);
@@ -198,14 +198,19 @@ namespace gg.ast.interpreter
 
             // some more custom code to deal with the build in properties of
             // the char rule
-            if (notIndex >= 0 
-                && ruleValue is CharRule charRule 
-                && charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+            if (notIndex >= 0 && ruleValue is CharRule charRule)
             {
-                charRule.MatchCharacters = CharRule.MatchType.NotInEnumeration;
+                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+                {
+                    charRule.MatchCharacters = CharRule.MatchType.NotInEnumeration;
+                }
+                else if (charRule.MatchCharacters == CharRule.MatchType.InRange)
+                {
+                    charRule.MatchCharacters = CharRule.MatchType.NotInRange;
+                }
             }
 
-            return repeatRule ?? (notRule ?? ruleValue);
+             return repeatRule ?? (notRule ?? ruleValue);
         }
 
         /// <summary>
@@ -217,7 +222,8 @@ namespace gg.ast.interpreter
         {
             if (ruleValue is CharRule charRule)
             {
-                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration
+                    || charRule.MatchCharacters == CharRule.MatchType.InRange)
                 {
                     // the not part is already defined in the charrule
                     // itself don't need to do anything
@@ -379,7 +385,7 @@ namespace gg.ast.interpreter
                 case CharRule.MatchType.Any:
                     result.Tag = $"{config.Tags.Unnamed} {config.Tags.MatchAnyCharacter}";
                     break;
-                case CharRule.MatchType.InMultiRange:
+                case CharRule.MatchType.InRange:
                     result.Tag = $"{config.Tags.Unnamed} {config.Tags.MatchCharactersInRange}";
                     result.Characters = str.Substring(node.StartIndex + 1, node.Length - 2).ReplaceEscapeCharacters();
                     break;
