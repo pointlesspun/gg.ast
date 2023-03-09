@@ -11,6 +11,7 @@ using gg.ast.util;
 using gg.ast.core.rules;
 
 using static gg.ast.util.FileCache;
+using System.Diagnostics;
 
 namespace gg.ast.examples.test.interpreter
 {
@@ -63,7 +64,7 @@ namespace gg.ast.examples.test.interpreter
         public void CreateHelloWorldInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/hello_world.spec", 4);
+            var (_, _, rules) = InitializeTest("./introduction/hello_world.spec", 4);
             
             var helloWorldRule = rules["helloWorld"];
 
@@ -94,7 +95,7 @@ namespace gg.ast.examples.test.interpreter
         public void CharSetInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/charsets.spec", 8);
+            var (_, _, rules) = InitializeTest("./introduction/charsets.spec", 8);
             
             var anyCharacter = rules["anyCharacter"];
             var aToZSet = rules["aToZSet"];
@@ -220,7 +221,7 @@ namespace gg.ast.examples.test.interpreter
         public void RepeatInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/repeat.spec", 17);
+            var (_, _, rules) = InitializeTest("./introduction/repeat.spec", 17);
 
             // do some spot checks
             var text = "hello world";
@@ -253,7 +254,7 @@ namespace gg.ast.examples.test.interpreter
         public void OrInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/or.spec", 9);
+            var (_, _, rules) = InitializeTest("./introduction/or.spec", 9);
 
             var correctResult = rules["correctResult"];
 
@@ -275,7 +276,7 @@ namespace gg.ast.examples.test.interpreter
         public void SequenceInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/sequences.spec", 7);
+            var (_, _, rules) = InitializeTest("./introduction/sequences.spec", 7);
             
             var helloRule = rules["helloSpaciousWorld"];
             var result = helloRule.Parse("hello   world");
@@ -290,7 +291,7 @@ namespace gg.ast.examples.test.interpreter
         public void NotInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./introduction/not.spec", 11);
+            var (_, _, rules) = InitializeTest("./introduction/not.spec", 11);
 
             var altComment = rules["altComment"];
             var text = "/* this is a comment */";
@@ -308,7 +309,7 @@ namespace gg.ast.examples.test.interpreter
         public void NumbersInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./specfiles/numbers.spec", 11);
+            var (_, _, rules) = InitializeTest("./specfiles/numbers.spec", 11);
 
             var number = rules["number"];
             var numberTexts = new string[] { "1", "-1", "0.1", "-69.42", "123e456", "12.32E-129" };
@@ -329,7 +330,7 @@ namespace gg.ast.examples.test.interpreter
         public void TypesInterpreterTest()
         {
             // load the spec file, test if the loaded rules matches the count and return the result
-            var (interpreter, rules) = InitializeTest("./specfiles/types.spec", 18);
+            var (_, _, rules) = InitializeTest("./specfiles/types.spec", 18);
 
             var number = rules["typeValue"];
             var testData = new (string text, string tag)[] { 
@@ -348,18 +349,45 @@ namespace gg.ast.examples.test.interpreter
                 Assert.IsTrue(result.Nodes[0].Tag == tag);
             }
         }
-        
-        private (IRule interpreter, Dictionary<string, IRule> rules) InitializeTest(
+
+        /// <summary>
+        /// </summary>
+        [TestMethod]
+        public void JsonInterpreterTest()
+        {
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (_, factory, rules) = InitializeTest("./specfiles/json.spec", 25);
+
+            var document = rules["document"];
+            var donuts = LoadTextFile("./json/donuts.json");
+            var science = LoadTextFile("./json/science.json");
+
+            var donutsResult = document.Parse(donuts);
+            var scienceResult = document.Parse(science);
+
+            // spot check the first item in the document 
+            var donutNode = donutsResult.Nodes[0][0][0][1][0][1][0][1][1];
+            Assert.IsTrue(donutNode.Tag == "string");
+
+            var donutValue = factory.ValueMap.Map<string>(donuts, donutNode);
+            Assert.IsTrue(donutValue == "donut");
+
+            donutsResult.Nodes[0].ToString((s) => Debug.Write(s), donuts);
+            scienceResult.Nodes[0].ToString((s) => Debug.Write(s), science);
+        }
+
+        private (IRule interpreter, ParserFactory factory, Dictionary<string, IRule> rules) InitializeTest(
             string filename, 
             int expectedRuleCount)
         {
             var interpreter = CreateInterpreter();
             var specFile = LoadTextFile(filename);
-            var rules = new ParserFactory().ParseRules(interpreter, specFile);
+            var factory = new ParserFactory();
+            var rules = factory.ParseRules(interpreter, specFile);
 
             Assert.IsTrue(rules.Count == expectedRuleCount);
 
-            return (interpreter, rules);
+            return (interpreter, factory, rules);
         }
     }
 }

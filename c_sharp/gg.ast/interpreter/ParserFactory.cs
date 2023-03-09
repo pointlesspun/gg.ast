@@ -30,6 +30,8 @@ namespace gg.ast.interpreter
             set => _config = value;
         }
 
+        public ValueMap ValueMap => _valueMap;
+
         public ParserFactory(InterpreterConfig config = null, ValueMap valueMap = null)
         {
             _config = config ?? new InterpreterConfig();
