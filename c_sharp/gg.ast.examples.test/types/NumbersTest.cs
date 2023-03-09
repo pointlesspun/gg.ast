@@ -6,7 +6,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.core;
 using gg.ast.interpreter;
-using gg.ast.util;
+
+using static gg.ast.util.FileCache;
 
 namespace gg.ast.tests.interpreter
 {
@@ -23,7 +24,7 @@ namespace gg.ast.tests.interpreter
                 ("-0.2", "number", "decimal"),
                 ("0.1e123", "number", "exponent"),                
             };
-            var interpreter = new ParserFactory().ParseFile("specfiles/numbers.spec");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("specfiles/numbers.spec"));
 
             Debug.WriteLine(interpreter.PrintRuleTree());
 

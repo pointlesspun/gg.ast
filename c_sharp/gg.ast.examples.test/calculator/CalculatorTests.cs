@@ -4,6 +4,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.interpreter;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.examples.test.calculator
 {
     [TestClass]
@@ -21,7 +23,7 @@ namespace gg.ast.examples.test.calculator
                 ("0.1e123 + ( 4 + (5*(3))) / (2-1)", "add", new string[] { "number", "divide" }),
             };
 
-            var interpreter = new ParserFactory().ParseFile("specfiles/calculator.spec");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("specfiles/calculator.spec"));
 
             // Debug.WriteLine(interpreter.PrintRuleTree());
 

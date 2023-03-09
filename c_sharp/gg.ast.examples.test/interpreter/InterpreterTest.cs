@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using gg.ast.util;
 using gg.ast.core.rules;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.examples.test.interpreter
 {
     [TestClass]
@@ -17,7 +19,8 @@ namespace gg.ast.examples.test.interpreter
     {
         private static Dictionary<string, IRule> ReadInterpreterSpec()
         {
-            return new ParserFactory().ParseFileRules("./specfiles/interpreter.spec");
+            var text = LoadTextFile("./specfiles/interpreter.spec");
+            return new ParserFactory().ParseRules(text);
         }
 
         private static IRule CreateInterpreter()
@@ -41,11 +44,11 @@ namespace gg.ast.examples.test.interpreter
             foreach (var directoryName in testFilesDirectories)
             {
                 var specFiles = Directory.EnumerateFiles(directoryName)
-                                    .Where(filename => filename.IndexOf(".spec") >= 0);
+                                    .Where(filename => filename.Contains(".spec"));
 
                 foreach (var file in specFiles)
                 {
-                    var text = File.ReadAllText(file);
+                    var text = LoadTextFile(file);
                     var result = interpreter.Parse(text);
 
                     Assert.IsTrue(result.IsSuccess);
@@ -59,11 +62,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void CreateHelloWorldInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-
-            var text = File.ReadAllText("./introduction/hello_world.spec");
-
-            var helloWorldRule = new ParserFactory().ParseRules(interpreter, text)["helloWorld"];
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/hello_world.spec", 4);
+            
+            var helloWorldRule = rules["helloWorld"];
 
             var helloWorldText = "hello world";
             var helloWorldResult = helloWorldRule.Parse(helloWorldText);
@@ -91,15 +93,14 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void CharSetInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-
-            var specFile = File.ReadAllText("./introduction/charsets.spec");
-            var specFileRules = new ParserFactory().ParseRules(interpreter, specFile);
-            var anyCharacter = specFileRules["anyCharacter"];
-            var aToZSet = specFileRules["aToZSet"];
-            var wideSet = specFileRules["wideSet"];
-            var abcEnumeration = specFileRules["abcEnumeration"];
-            var notABCEnumeration = specFileRules["notABCEnumeration"];
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/charsets.spec", 8);
+            
+            var anyCharacter = rules["anyCharacter"];
+            var aToZSet = rules["aToZSet"];
+            var wideSet = rules["wideSet"];
+            var abcEnumeration = rules["abcEnumeration"];
+            var notABCEnumeration = rules["notABCEnumeration"];
 
             for (var i = 0; i < 255; i++)
             {
@@ -218,18 +219,14 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void RepeatInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-
-            var specFile = File.ReadAllText("./introduction/repeat.spec");
-            var repeatSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
-
-            Assert.IsTrue(repeatSpecFileRules.Count == 17);
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/repeat.spec", 17);
 
             // do some spot checks
             var text = "hello world";
             var invalidText = "hi weld";
 
-            var twoNoWs = repeatSpecFileRules["explicitNoWs.two"];
+            var twoNoWs = rules["explicitNoWs.two"];
             var result = twoNoWs.Parse(text + text + text);
 
             Assert.IsTrue(result.IsSuccess);
@@ -237,7 +234,7 @@ namespace gg.ast.examples.test.interpreter
 
             Assert.IsFalse(twoNoWs.Parse(invalidText).IsSuccess);
 
-            var zeroOrOne = repeatSpecFileRules["zeroOrOne"];
+            var zeroOrOne = rules["zeroOrOne"];
 
             result = zeroOrOne.Parse(text + text + text);
 
@@ -255,14 +252,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void OrInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/or.spec", 9);
 
-            var specFile = File.ReadAllText("./introduction/or.spec");
-            var orSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
-
-            Assert.IsTrue(orSpecFileRules.Count == 9);
-
-            var correctResult = orSpecFileRules["correctResult"];
+            var correctResult = rules["correctResult"];
 
             var testData = new string[] { "1 * 2", "3", "4 - 5" };
 
@@ -281,13 +274,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void SequenceInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-            var specFile = File.ReadAllText("./introduction/sequences.spec");
-            var sequenceSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
-
-            Assert.IsTrue(sequenceSpecFileRules.Count == 7);
-
-            var helloRule = sequenceSpecFileRules["helloSpaciousWorld"];
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/sequences.spec", 7);
+            
+            var helloRule = rules["helloSpaciousWorld"];
             var result = helloRule.Parse("hello   world");
 
             Assert.IsTrue(result.IsSuccess);
@@ -299,13 +289,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void NotInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-            var specFile = File.ReadAllText("./introduction/not.spec");
-            var notSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./introduction/not.spec", 11);
 
-            Assert.IsTrue(notSpecFileRules.Count == 11);
-
-            var altComment = notSpecFileRules["altComment"];
+            var altComment = rules["altComment"];
             var text = "/* this is a comment */";
 
             var result = altComment.Parse(text);
@@ -320,13 +307,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void NumbersInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-            var specFile = File.ReadAllText("./specfiles/numbers.spec");
-            var numbersSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./specfiles/numbers.spec", 11);
 
-            Assert.IsTrue(numbersSpecFileRules.Count == 11);
-
-            var number = numbersSpecFileRules["number"];
+            var number = rules["number"];
             var numberTexts = new string[] { "1", "-1", "0.1", "-69.42", "123e456", "12.32E-129" };
 
             foreach ( var text in numberTexts )
@@ -344,13 +328,10 @@ namespace gg.ast.examples.test.interpreter
         [TestMethod]
         public void TypesInterpreterTest()
         {
-            var interpreter = CreateInterpreter();
-            var specFile = File.ReadAllText("./specfiles/types.spec");
-            var typesSpecFileRules = new ParserFactory().ParseRules(interpreter, specFile);
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, rules) = InitializeTest("./specfiles/types.spec", 18);
 
-            Assert.IsTrue(typesSpecFileRules.Count == 18);
-
-            var number = typesSpecFileRules["typeValue"];
+            var number = rules["typeValue"];
             var testData = new (string text, string tag)[] { 
                 ("12.32E-129", "number"),
                 ("true", "boolean"),
@@ -366,6 +347,19 @@ namespace gg.ast.examples.test.interpreter
                 Assert.IsTrue(result.CharactersRead == text.Length);
                 Assert.IsTrue(result.Nodes[0].Tag == tag);
             }
+        }
+        
+        private (IRule interpreter, Dictionary<string, IRule> rules) InitializeTest(
+            string filename, 
+            int expectedRuleCount)
+        {
+            var interpreter = CreateInterpreter();
+            var specFile = LoadTextFile(filename);
+            var rules = new ParserFactory().ParseRules(interpreter, specFile);
+
+            Assert.IsTrue(rules.Count == expectedRuleCount);
+
+            return (interpreter, rules);
         }
     }
 }

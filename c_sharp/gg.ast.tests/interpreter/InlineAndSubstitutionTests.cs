@@ -3,6 +3,8 @@
 using gg.ast.core.rules;
 using gg.ast.interpreter;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.tests.interpreter
 {
     [TestClass]
@@ -11,7 +13,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void ReferenceAbcReferralTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./data/singleInlineReference.spec");
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/singleInlineReference.spec"));
 
             var a = rules["a"] as LiteralRule;
             var b = rules["b"] as LiteralRule;
@@ -30,7 +32,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void ReferenceDefReferralTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./data/reverseInline.spec");
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/reverseInline.spec"));
 
             var d = rules["d"] as LiteralRule;
             var e = rules["e"] as LiteralRule;
@@ -49,7 +51,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void ReferenceGhijReferralTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./data/multiReference.spec");
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/multiReference.spec"));
 
             var g = rules["g"] as LiteralRule;
             var h = rules["h"] as LiteralRule;
@@ -72,7 +74,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void GroupTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./data/groupReference.spec");
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/groupReference.spec"));
 
             var a = rules["a"] as LiteralRule;
             var b = rules["b"] as RepeatRule;
@@ -91,7 +93,7 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void SubstitutionTest()
         {
-            var rules = new ParserFactory().ParseFileRules("./data/repeatSubstitution.spec");
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/repeatSubstitution.spec"));
 
             var a = rules["a"] as CharRule;
             var b = rules["b"] as CharRule;

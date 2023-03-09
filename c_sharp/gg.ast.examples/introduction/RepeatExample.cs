@@ -6,6 +6,8 @@ using gg.ast.core;
 using gg.ast.core.rules;
 using gg.ast.interpreter;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.examples.introduction
 {
     public class RepeatExample
@@ -28,7 +30,8 @@ namespace gg.ast.examples.introduction
 
         public static Dictionary<string, IRule> LoadSpecFileRules(string specFile = "introduction/repeat.spec")
         {
-            return new ParserFactory().ParseFileRules(specFile);
+            var rules = LoadTextFile(specFile);
+            return new ParserFactory().ParseRules(rules);
         }
     }
 }

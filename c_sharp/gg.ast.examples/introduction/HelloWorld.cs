@@ -4,6 +4,8 @@ using gg.ast.core;
 using gg.ast.core.rules;
 using gg.ast.interpreter;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.examples.introduction
 {
     public class HelloWorld
@@ -19,7 +21,8 @@ namespace gg.ast.examples.introduction
 
         public static IRule LoadSpecFile(string specFile = "introduction/hello_world.spec")
         {
-            return new ParserFactory().ParseFile(specFile);
+            var rules = LoadTextFile(specFile);
+            return new ParserFactory().Parse(rules);
         }
     }
 }

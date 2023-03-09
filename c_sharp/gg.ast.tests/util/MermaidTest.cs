@@ -2,9 +2,12 @@
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using System.IO;
+
 using gg.ast.interpreter;
 using gg.ast.util;
-using System.IO;
+
+using static gg.ast.util.FileCache;
 
 namespace gg.ast.tests.util
 {
@@ -24,8 +27,8 @@ namespace gg.ast.tests.util
                 AllowDuplicateBranches = false,
                 ShowReferenceRules = true,
             };
-            var mermaidRules = new ParserFactory().ParseFileRules("./util/mermaid.spec");
-            var jsonRules = new ParserFactory().ParseFileRules("./util/json.spec");
+            var mermaidRules = new ParserFactory().ParseRules(LoadTextFile("./util/mermaid.spec"));
+            var jsonRules = new ParserFactory().ParseRules(LoadTextFile("./util/json.spec"));
 
             mermaid.ToChartFile(mermaidRules["mermaidChart"]);
             mermaid.ToChartFile(jsonRules["document"]);
