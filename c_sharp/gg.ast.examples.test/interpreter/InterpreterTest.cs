@@ -376,6 +376,62 @@ namespace gg.ast.examples.test.interpreter
             // scienceResult.Nodes[0].ToString((s) => Debug.Write(s), science);
         }
 
+
+        /// <summary>
+        /// Inception
+        /// </summary>
+        [TestMethod]
+        public void InterpreterInterpreterTest()
+        {
+            // load the spec file, test if the loaded rules matches the count and return the result
+            var (interpreter, factory, rules) = InitializeTest("./specfiles/interpreter.spec", 57);
+
+            var specInterpreter = rules["interpreter"];
+
+            var interpreterSpec = LoadTextFile("./specfiles/interpreter.spec");
+            var inceptionInterpreter = new ParserFactory()
+                                .ParseRules(specInterpreter, interpreterSpec)["interpreter"];
+
+            var specRuleSet = specInterpreter.CollectRules();
+            var interpreterRuleSet = interpreter.CollectRules();
+            var inceptionInterpreterRuleSet = inceptionInterpreter.CollectRules();
+
+            Assert.IsTrue(specRuleSet.Count == interpreterRuleSet.Count);
+            Assert.IsTrue(interpreterRuleSet.Count == inceptionInterpreterRuleSet.Count);
+
+            var jsonSpec = LoadTextFile("./specfiles/json.spec");
+            var document = new ParserFactory()
+                                .ParseRules(inceptionInterpreter, jsonSpec)["document"];
+
+            var donuts = LoadTextFile("./json/donuts.json");
+            var science = LoadTextFile("./json/science.json");
+
+            var donutsResult = document.Parse(donuts);
+            var scienceResult = document.Parse(science);
+
+            // spot check the first item in the document 
+            var donutNode = donutsResult.Nodes[0][0][0][1][0][1][0][1][1];
+            Assert.IsTrue(donutNode.Tag == "string");
+
+            var donutValue = factory.ValueMap.Map<string>(donuts, donutNode);
+            Assert.IsTrue(donutValue == "donut");
+
+            donutsResult.Nodes[0].ToString((s) => Debug.Write(s), donuts);
+            // scienceResult.Nodes[0].ToString((s) => Debug.Write(s), science);
+        }
+
+        // ... not really a test, just checking if my intuition was right and the spec file
+        // is more efficient
+        [TestMethod]
+        public void CountNodes()
+        {
+            var interpreterRule = InterpreterRules.CreateInterpreterRule(new InterpreterConfig());
+            var interpreterSpec = CreateInterpreter();
+
+            var interpreterRuleSet = interpreterRule.CollectRules();
+            var specRuleSet = interpreterSpec.CollectRules();
+        }
+
         private (IRule interpreter, ParserFactory factory, Dictionary<string, IRule> rules) InitializeTest(
             string filename, 
             int expectedRuleCount)

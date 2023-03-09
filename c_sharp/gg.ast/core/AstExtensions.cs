@@ -73,7 +73,34 @@ namespace gg.ast.core
             }
         }        
 
-        public static string GetTag(this AstNode node) => node.Rule.Tag;        
+        public static string GetTag(this AstNode node) => node.Rule.Tag;
+
+        /// <summary>
+        /// Go through a rule graph and collect all unique rules and subrules
+        /// </summary>
+        /// <param name="rule">The start of the graph</param>
+        /// <param name="collectedRules">Optional result container, will be created if none is provided</param>
+        /// <returns>A HashSet of all rules in this rule graph</returns>
+        public static HashSet<IRule> CollectRules(this IRule rule, HashSet<IRule> collectedRules = null)
+        {
+            collectedRules ??= new HashSet<IRule>();
+
+            if (!collectedRules.Contains(rule))
+            {
+                collectedRules.Add(rule);
+
+                if (rule is IMetaRule metaRule && metaRule.Subrule != null)
+                {
+                    CollectRules(metaRule.Subrule, collectedRules);
+                }
+                else if (rule is IRuleGroup group && group.Subrules != null)
+                {
+                    group.Subrules.ForEachIndexed((subrule, _) => CollectRules(subrule, collectedRules));    
+                }
+            }
+
+            return collectedRules;
+        }
 
         public static string PrintRuleTree(
             this IRule rule, 
