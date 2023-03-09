@@ -5,6 +5,9 @@ using gg.ast.core.rules;
 
 namespace gg.ast.common
 {
+    /// <summary>
+    /// Rules to define strings with escape sequences
+    /// </summary>
     public static class ExtendedStringRules
     {
         public static IRule CreateStringRule(

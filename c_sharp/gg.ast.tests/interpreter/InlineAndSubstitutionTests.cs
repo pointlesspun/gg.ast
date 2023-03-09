@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿/* (c) pointless pun, license: cc attribution 3.0 unported https://creativecommons.org/licenses/by/3.0/ */
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.core.rules;
 using gg.ast.interpreter;

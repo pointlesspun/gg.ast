@@ -371,15 +371,18 @@ Based on these concepts a number of all core rules are defined which can be used
 
 ## v 0.2
 
-
 * More clean up and documentation
-* Add not_in_range to characters
+	* Split up read me into a short read me and some different documentation
+	* Add substitution documentation
+	* Add tool documentation
+	* Add interpreter documentation
 
 ### done
 
 * Implement interpreter in spec file
 * Create Mermaid files from RuleSets and Asts
 * Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
+* Add not_in_range to characters
 
 ### rejected 
 

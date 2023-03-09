@@ -5,6 +5,9 @@ using gg.ast.core.rules;
 
 namespace gg.ast.common
 {
+    /// <summary>
+    /// Rules defining code comments
+    /// </summary>
     public static class CommentsRules
     {
         public static IRule CreateSinglelineCommentRule(CommentsConfig config, NodeVisiblity visibility = NodeVisiblity.Hidden)

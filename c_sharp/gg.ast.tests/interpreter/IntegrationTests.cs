@@ -209,7 +209,7 @@ namespace gg.ast.tests.interpreter
                 Assert.IsTrue(result.IsSuccess);
 
                 Debug.WriteLine("\n-------\n");
-                result.Nodes[0].ToString((s) => Debug.Write(s), text);
+                result.Nodes[0].PrintTree((s) => Debug.Write(s), text);
 
                 Assert.IsTrue(result.Nodes[0].Tag == "helloRepeatWorld");
                 Assert.IsTrue(result.Nodes[0].Length == text.Length);

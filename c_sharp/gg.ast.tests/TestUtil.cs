@@ -113,7 +113,7 @@ namespace gg.ast.tests
                 try
                 {
                     var result = rule.Parse(text);
-                    result.Nodes[0].ToString((s) => Debug.Write(s), text);
+                    result.Nodes[0].PrintTree((s) => Debug.Write(s), text);
                     Assert.Fail();
                 }
                 catch (ParseException e)

@@ -1,6 +1,8 @@
-﻿
+﻿/* (c) pointless pun, license: cc attribution 3.0 unported https://creativecommons.org/licenses/by/3.0/ */
+
 using System.IO;
 using System.Linq;
+using System.Diagnostics;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,7 +13,6 @@ using gg.ast.util;
 using gg.ast.core.rules;
 
 using static gg.ast.util.FileCache;
-using System.Diagnostics;
 
 namespace gg.ast.examples.test.interpreter
 {

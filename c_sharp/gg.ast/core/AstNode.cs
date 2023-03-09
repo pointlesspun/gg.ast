@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace gg.ast.core
 {
+    /// <summary>
+    /// Node making up an abstract syntax tree
+    /// </summary>
     public class AstNode
     {
         public AstNode Parent { get; set; }

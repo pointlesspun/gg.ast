@@ -2,6 +2,9 @@
 
 namespace gg.ast.tool
 {
+    /// <summary>
+    /// Configuration filled with data from the command line args
+    /// </summary>
     public class ToolConfig
     {
         public CommandLineArgument SpecFilename { get; private set; } = 
