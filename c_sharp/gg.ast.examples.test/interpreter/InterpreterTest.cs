@@ -416,7 +416,7 @@ namespace gg.ast.examples.test.interpreter
             var donutValue = factory.ValueMap.Map<string>(donuts, donutNode);
             Assert.IsTrue(donutValue == "donut");
 
-            donutsResult.Nodes[0].ToString((s) => Debug.Write(s), donuts);
+            // donutsResult.Nodes[0].ToString((s) => Debug.Write(s), donuts);
             // scienceResult.Nodes[0].ToString((s) => Debug.Write(s), science);
         }
 
