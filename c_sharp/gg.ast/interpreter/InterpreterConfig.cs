@@ -161,6 +161,13 @@ namespace gg.ast.interpreter
         /// </summary>
         public bool HideUnnamedRules { get; set; } = true;
 
+        /// <summary>
+        /// If set to true all reference rules will be 'inlined' or 'aliased' (replaced) with their
+        /// actual values. If false the reference rules will stay as is. This is only for debugging
+        /// purposes as the Parsing will throw an exception when reference rules are left in.
+        /// </summary>
+        public bool InlineReferences { get; set; } = true;
+
         public static IRule CreateWhiteSpaceRule(CommentsConfig config = null, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
             var preprocessorConfig = config ?? new CommentsConfig();

@@ -115,7 +115,15 @@ namespace gg.ast.interpreter
                 var firstRuleTag = ParseRules(ruleList, interpreterScript);
 
                 // fill in all references
-                _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
+                if (_config.InlineReferences)
+                {
+                    _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
+                }
+                else
+                {
+                    _referenceList.ForEach(referenceRule => referenceRule.Subrule = _ruleSet[referenceRule.Reference]);
+                }
+
                 _referenceList.Clear();
 
                 // substitude all subrules (that can be substitued

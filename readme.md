@@ -105,12 +105,12 @@ var valueMap = JsonRules.CreateValueMap();
 var donutsObj = valueMap.Map<Dictionary<string, object>>(text, r.Nodes[0]);
 ```
 
-To learn more about gg.ast see
+To learn more about gg.ast see:
 
 * [The rules documentation](./doc/1_rules.md) for examples and the specifics of all core rules available.
-* [gast tool documentation]() (forthcoming)
-* [parser details, aliasing, substitution]() (forthcoming)
-* [The project setup](./doc/2_project.md) for an outline of how the code is organized
+* [gast tool documentation]() (forthcoming).
+* [parser details, aliasing, substitution]() (forthcoming).
+* [The project setup](./doc/2_project.md) for an outline of the organization of the code.
 
 
 # Backlog
@@ -139,6 +139,7 @@ To learn more about gg.ast see
 
 * abort on failure (critical) = {"literal"};  {literal"[3]}
 * Improve Error handling / reporting
+* figure out a way to declare literals as case insensitive
 
 
 ## Beyond v0.3

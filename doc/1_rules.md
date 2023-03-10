@@ -208,7 +208,7 @@ As always, check the [accompanying test](../c_sharp/gg.ast.examples.test/introdu
 
 ### AST Visibility
 
-Given a sufficiently complex rule set, the generated AST may get rather large. Some of these rules may serve little to no value to the information the AST provides. Take this [json example](../c_sharp/gg.ast.examples/json/json.spec).
+Given a sufficiently complex rule set, the generated AST may get rather large. Some of these rules may serve little to no value to the information the AST provides. Take this [json example](../c_sharp/gg.ast.examples/specfiles/json.spec).
 
 ```csharp
 using "types/types.spec";

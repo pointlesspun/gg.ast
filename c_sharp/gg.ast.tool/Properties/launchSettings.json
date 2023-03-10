@@ -2,7 +2,7 @@
   "profiles": {
     "gg.ast.tool": {
       "commandName": "Project",
-      "commandLineArgs": "mermaid.spec -m test.txt --options rd"
+      "commandLineArgs": "example.spec -m example.md --options rdm"
     }
   }
 }
