@@ -4,13 +4,13 @@ We'll demonstrate the core rules by example. Each example will be demonstrated s
 
 ### Literal (`gg.ast.core.rules.LiteralRule.cs`)
 
-A literal rule succeeds if the characters of the literal are matched in the text in the same order. In the interpreter script a literal is defined by [declaring it as a string](./c_sharp/gg.ast.examples/introduction/hello_world.spec), eg:
+A literal rule succeeds if the characters of the literal are matched in the text in the same order. In the interpreter script a literal is defined by [declaring it as a string](../c_sharp/gg.ast.examples/introduction/hello_world.spec), eg:
 
 ```csharp
 helloWorld = "hello world";
 ```
 
-The equivalent c# [code](./c_sharp/gg.ast.examples/introduction/HelloWorld.cs):
+The equivalent c# [code](../c_sharp/gg.ast.examples/introduction/HelloWorld.cs):
 
 ```csharp
 public static IRule HelloWorldRule()
@@ -25,7 +25,7 @@ public static IRule HelloWorldRule()
 
 Note that the code equivalent has the option to parse the characters with or without case sensitivity (see the property `bool IsCaseSensitive { get; set; } = true`). This option currently doesn't exist in the interpreter script.
 
-To use the rule see the [corresponding test](./c_sharp/gg.ast.examples.test/introduction/HelloWorldTest.cs). We'll include this test here for this example but since the tests will generally the same, these will be omitted in further examples.
+To use the rule see the [corresponding test](../c_sharp/gg.ast.examples.test/introduction/HelloWorldTest.cs). We'll include this test here for this example but since the tests will generally the same, these will be omitted in further examples.
 
 ```csharp
 [TestMethod]
@@ -51,7 +51,7 @@ public void HelloWorldRuleTest()
 }
 ```
 
-### Characters ([`gg.ast.core.rules.CharRule.cs`](./c_sharp/gg.ast/core/rules/CharRule.cs))
+### Characters ([`gg.ast.core.rules.CharRule.cs`](../c_sharp/gg.ast/core/rules/CharRule.cs))
 
 Where literals parse characters in a predefined sequence, the CharRule allows for parsing characters in any order as long as they are (not) part of a set. Sets of characters come in the following variations:
 
@@ -72,11 +72,11 @@ abcEnumeration = 'abc';
 notABCEnumeration = !'abc';
 ```
 
-The [corresponding test](./c_sharp/gg.ast.examples.test/introduction/CharSetsTest.cs) demonstrates how to use this rule and its variations.
+The [corresponding test](../c_sharp/gg.ast.examples.test/introduction/CharSetsTest.cs) demonstrates how to use this rule and its variations.
 
 Note that the class offers other properties such as Min/Max, this will be explained later in the RepeatRule. Futhermore there is currently no 'notInSet', this will be added in a later version.
 
-### Sequence ([`gg.ast.core.rules.SequenceRule.cs`](./c_sharp/gg.ast/core/rules/SequenceRule.cs))
+### Sequence ([`gg.ast.core.rules.SequenceRule.cs`](../c_sharp/gg.ast/core/rules/SequenceRule.cs))
 
 With the Literal and Character rules in place we can start building rule compositions. The 'Sequence' rule takes a number of other rules and matches these rules in sequence of appearance. 
 
@@ -123,9 +123,9 @@ public static IRule HelloSpaciousWorldSequence()
 }
 ```
 
-If you don't want to define the whitespace rule yourself every time you need one, the [ShortHandRules](./c_sharp/gg.ast/common/ShortHandRules.cs) class defines a convenient utility method to create a whitespace rule (`ShortHandRules.CreateWhitespaceRule`).
+If you don't want to define the whitespace rule yourself every time you need one, the [ShortHandRules](../c_sharp/gg.ast/common/ShortHandRules.cs) class defines a convenient utility method to create a whitespace rule (`ShortHandRules.CreateWhitespaceRule`).
 
-### Or ([`gg.ast.core.rules.OrRule.cs`](./c_sharp/gg.ast/core/rules/OrRule.cs))
+### Or ([`gg.ast.core.rules.OrRule.cs`](../c_sharp/gg.ast/core/rules/OrRule.cs))
 
 The OrRule allows rule selection. Given a list of options separated by a '|', the first rule matching the current position in the text passes. Eg:
 
@@ -143,11 +143,11 @@ operation          = value, operator, value;
 operator           = "+" | "-" | "/" | "*";
 value        	   = `09`; 
 ```
-More information on how to construct an OrRule can be found in the [test](./c_sharp/gg.ast.examples.test/introduction/OrTest.cs).
+More information on how to construct an OrRule can be found in the [test](../c_sharp/gg.ast.examples.test/introduction/OrTest.cs).
 
 One thing to note in this example is the hash in front of the 'wrongResult' and 'correctResult'. This hash denotes 'visibility' of the `AstNodes` produced by the rule. This will be discussed elsewhere.
 
-### Repeat ([`gg.ast.core.rules.RepeatRule.cs`](./c_sharp/gg.ast/core/rules/RepeatRule.cs))
+### Repeat ([`gg.ast.core.rules.RepeatRule.cs`](../c_sharp/gg.ast/core/rules/RepeatRule.cs))
 
 The RepeatRule allows for repeating the same rule multiple times. There are several variations and shorthand forms. The shorthand forms have a single postfix, either '?', '*' or '+'. The 'explicit' repeat form requires a range to be specified as a postfix. If the range postfix uses square brackets ('[]') any whitespace in between the repeats is being ignored, if a smaller/greater than is being used ('<>') no whitespace is expected. If the lower bound or upper bound in the range is omitted, no lower or upper bound is expected. ie:
 
@@ -172,9 +172,9 @@ explicitNoWs.oneOrTwo   = helloWorld<1..2>;
 explicitNoWs.two        = helloWorld < 2 >;
 ```
  
-More information on how to use the `RepeatRule` can be found in the [repeatrule test](./c_sharp/gg.ast.examples.test/introduction/RepeatTest.cs).
+More information on how to use the `RepeatRule` can be found in the [repeatrule test](../c_sharp/gg.ast.examples.test/introduction/RepeatTest.cs).
 
-### NotRule ([`gg.ast.core.rules.NotRule.cs`](./c_sharp/gg.ast/core/rules/NotRule.cs))
+### NotRule ([`gg.ast.core.rules.NotRule.cs`](../c_sharp/gg.ast/core/rules/NotRule.cs))
 
 The not rule inverts the result of result of the associated subrule. Ie if the a literal rule would match the text "foo", a `NotRule` with that same literal rule would match anything but "foo". 
 
@@ -187,7 +187,7 @@ One major caveat is that the `NotRule` does not advance the cursor position. If 
 infiniteLoop = !"foo"*;
 ```
 
-Some rules have build in detection to spot infinite loops and will throw a `ParseException` when this is the case, but it's better to avoid an infinite loop altogether by for instance adding a rule reading any [follow up character](./c_sharp/gg.ast.examples/introduction/not.spec):
+Some rules have build in detection to spot infinite loops and will throw a `ParseException` when this is the case, but it's better to avoid an infinite loop altogether by for instance adding a rule reading any [follow up character](../c_sharp/gg.ast.examples/introduction/not.spec):
 
 ```csharp
 commentEnd      = "*/";
@@ -204,11 +204,11 @@ skipUntilCommentEnd = ~commentEnd*;
 
 altComment          = commentStart skipUntilCommentEnd commentEnd;
 ```
-As always, check the [accompanying test](./c_sharp/gg.ast.examples.test/introduction/NotTest.cs) for more information.
+As always, check the [accompanying test](../c_sharp/gg.ast.examples.test/introduction/NotTest.cs) for more information.
 
 ### AST Visibility
 
-Given a sufficiently complex rule set, the generated AST may get rather large. Some of these rules may serve little to no value to the information the AST provides. Take this [json example](./c_sharp/gg.ast.examples/json/json.spec).
+Given a sufficiently complex rule set, the generated AST may get rather large. Some of these rules may serve little to no value to the information the AST provides. Take this [json example](../c_sharp/gg.ast.examples/json/json.spec).
 
 ```csharp
 using "types/types.spec";
@@ -229,7 +229,7 @@ object = "{", (property, (",", property)*)?, "}";
 
 The 'jsonValue' rule in this example selects from a typeValue, array or object. While this is useful, adding this node to the ast tree adds an unnecessary node. Generally speaking we're interested in the outcome of this selection, not in the selection itself. We can prevent this node from being added to the AST tree by prefixing it with `#`, leading to a smaller overall tree and less work to process. 
 
-The action of keeping nodes out of the AST tree is referred to (in gg.ast) as defining the rule's visibility (see [IRule.Visibility](./c_sharp/gg.ast/core/IRule.cs)). There are three values 
+The action of keeping nodes out of the AST tree is referred to (in gg.ast) as defining the rule's visibility (see [IRule.Visibility](../c_sharp/gg.ast/core/IRule.cs)). There are three values 
 
 * 'visible', the node is added to the AST
 * 'transitive' (`#`), the node is removed, but its children are added to the AST
