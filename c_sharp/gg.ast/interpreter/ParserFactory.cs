@@ -2,11 +2,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
-
+using System.Linq;
 using gg.ast.core;
 using gg.ast.core.rules;
-
+using gg.ast.util;
 using static gg.ast.interpreter.InterpreterRules;
 
 namespace gg.ast.interpreter
@@ -28,6 +29,8 @@ namespace gg.ast.interpreter
             get => _config;
             set => _config = value;
         }
+
+        public ValueMap ValueMap => _valueMap;
 
         public ParserFactory(InterpreterConfig config = null, ValueMap valueMap = null)
         {
@@ -71,39 +74,69 @@ namespace gg.ast.interpreter
         /// <returns>A dictionary of the rules (tag/irule) </returns>
         public Dictionary<string, IRule> ParseRules(string interpreterScript, bool findMainRule = true)
         {
-            var result = CreateInterpreterRule(_config).Parse(interpreterScript);
+            return ParseRules(CreateInterpreterRule(_config), interpreterScript, findMainRule);
+        }
 
-            if (result.IsSuccess && result.Nodes[0].Children != null && result.Nodes[0].Children.Count > 0)
-            {               
-                // read the using and rule parts
-                var (useList, ruleList) = GetUseBlockAndRuleList(result.Nodes[0]);
+        public Dictionary<string, IRule> ParseRules(IRule interpreterRule, string interpreterScript, bool findMainRule = true)
+        {
+            var result = interpreterRule.Parse(interpreterScript);
 
-                if (useList != null)
-                {
-                    // import all the spec files referred to in the using block
-                    ParseUseList(useList, interpreterScript);
-                }
-
-                if (ruleList != null)
-                {
-                    // first pass, parse as many rules as we can and collect all references (to other rules) found
-                    var firstRuleTag = ParseRules(ruleList, interpreterScript);
-
-                    // fill in all references
-                    _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
-                    _referenceList.Clear();
-
-                    // if there is no main rule create a main rule referencing the first rule encountered
-                    if (findMainRule && !_ruleSet.ContainsKey(_config.Tags.Main))
-                    {
-                        _ruleSet[_config.Tags.Main] = _ruleSet[firstRuleTag];
-                    }
-                }
-
-                return _ruleSet;
+            if (result.IsSuccess
+                && result.Nodes[0].Children != null
+                && result.Nodes[0].Children.Count > 0)
+            {
+                return CreateInterpreterRules(result.Nodes, interpreterScript, findMainRule);
             }
 
             return null;
+        }
+
+        private Dictionary<string, IRule> CreateInterpreterRules(
+            List<AstNode> nodes, 
+            string interpreterScript, 
+            bool findMainRule = true
+        ) { 
+            // register the whitespace rule
+            _ruleSet[_config.Tags.Whitespace] = _config.WhiteSpace;
+            _ruleSet[_config.Tags.WhitespaceShortHand] = _config.WhiteSpace;
+
+            // read the using and rule parts
+            var (useList, ruleList) = GetUseBlockAndRuleList(nodes[0]);
+
+            if (useList != null)
+            {
+                // import all the spec files referred to in the using block
+                ParseUseList(useList, interpreterScript);
+            }
+
+            if (ruleList != null)
+            {
+                // first pass, parse as many rules as we can and collect all references (to other rules) found
+                var firstRuleTag = ParseRules(ruleList, interpreterScript);
+
+                // fill in all references
+                if (_config.InlineReferences)
+                {
+                    _referenceList.ForEach(referenceRule => InlineReference(referenceRule, _ruleSet));
+                }
+                else
+                {
+                    _referenceList.ForEach(referenceRule => referenceRule.Subrule = _ruleSet[referenceRule.Reference]);
+                }
+
+                _referenceList.Clear();
+
+                // substitude all subrules (that can be substitued
+                Substitude(_ruleSet);
+
+                // if there is no main rule create a main rule referencing the first rule encountered
+                if (findMainRule && !_ruleSet.ContainsKey(_config.Tags.Main))
+                {
+                    _ruleSet[_config.Tags.Main] = _ruleSet[firstRuleTag];
+                }
+            }
+
+            return _ruleSet;
         }
 
         /// <summary>
@@ -196,64 +229,143 @@ namespace gg.ast.interpreter
          }
 
         /// <summary>
-        /// Replace the references with their actual refered value. 
+        /// Replace the references with their actual referred value. 
         /// </summary>
         /// <param name="rule"></param>
         /// <param name="ruleSet"></param>
-        private static void InlineReference(
-            ReferenceRule rule, 
-            Dictionary<string, IRule> ruleSet)
+        private static void InlineReference(ReferenceRule rule, Dictionary<string, IRule> ruleSet)
         {
-            rule.Subrule = ruleSet[rule.Reference];
-         
+            // is this a toplevel rule (eg a = b) ? 
             if (rule.Parent == null)
             {
-                // top level rule, replace this rule in the ruleset
-                ruleSet[rule.Tag] = rule.Subrule;
-            }
-            
-            else if (rule.Parent is IRuleGroup ruleGroup)
-            {
-                // replace the reference in the group with the actual rule
-                var ruleIndex = Array.IndexOf(ruleGroup.Subrules, rule);
-                ruleGroup.Subrules[ruleIndex] = rule.Subrule;
-            }
-            else if (rule.Parent is IMetaRule metaRule)
-            {
-                // if the meta rule is a repeat rule and the current reference
-                // is to a character rule, copy the repeat parameters (min, max)
-                // and replace the repeat with the char rule.
-                if (metaRule is RepeatRule repeatRule && rule.Subrule is CharRule charRule)
+                // has this reference rule already been resolved ?
+                if (ruleSet.TryGetValue(rule.Tag, out var registeredRule) && registeredRule == rule)
                 {
-                    var inlineCharRule = (CharRule) charRule.Clone();
+                    ruleSet[rule.Tag] = Dereference(ruleSet[rule.Reference], rule.Tag, ruleSet);
+                }
+            }
+            else
+            {
+                // reference is part of a IRuleGroup or IMetaRule
+                var alias = ruleSet[rule.Reference];
 
-                    inlineCharRule.Min = repeatRule.Min;
-                    inlineCharRule.Max = repeatRule.Max;
-                    
-                    if (repeatRule.Parent != null)
+                // if alias is a ReferenceRule it implies the reference hasn't been resolved,
+                // so dereference it first
+                if (alias is ReferenceRule) 
+                {
+                    alias = Dereference(alias, rule.Reference, ruleSet);
+                    ruleSet[rule.Reference] = alias;
+                }
+
+                // replace the reference in the parent with the alias
+                if (rule.Parent is IRuleGroup ruleGroup)
+                {
+                    var ruleIndex = Array.IndexOf(ruleGroup.Subrules, rule);
+
+                    // if the ruleIndex cannot be found, the inlining has happened 
+                    // before so skip it
+                    if (ruleIndex != -1)
                     {
-                        if (repeatRule.Parent is IRuleGroup groupParent)
-                        {
-                            var ruleIndex = Array.IndexOf(groupParent.Subrules, repeatRule);
-                            groupParent.Subrules[ruleIndex] = inlineCharRule;
-                        }
-                        else if (repeatRule.Parent is IMetaRule metaParent)
-                        {
-                            metaParent.Subrule = inlineCharRule;
-                        }
-                    }
-                    else
-                    {
-                        // repeat doesn't have a parent, so it's a top level rule.
-                        // replace the entire repeat with the reference rule
-                        ruleSet[repeatRule.Tag] = inlineCharRule;
+                        ruleGroup.Subrules[ruleIndex] = alias;
                     }
                 }
-                else
+                else if (rule.Parent is IMetaRule metaRule && metaRule.Subrule == rule)
                 {
-                    metaRule.Subrule = rule.Subrule;
+                    metaRule.Subrule = alias;
                 }
             }
         }
+
+        private static IRule Dereference(IRule alias, string tag, Dictionary<string, IRule> ruleSet)
+        {
+            while (alias is ReferenceRule deref)
+            {
+                alias = ruleSet[deref.Reference];
+
+                if (alias is IMetaRule metaRule && metaRule.Subrule is ReferenceRule metaRuleReference)
+                {
+                    InlineReference(metaRuleReference, ruleSet);
+                }
+                else if (alias is IRuleGroup ruleGroup && ruleGroup.Subrules.Any( subRule => subRule is ReferenceRule))
+                {
+                    ruleGroup.Subrules.ForEachIndexed( (subRule, idx) =>
+                    {
+                        if (subRule is ReferenceRule subRuleReference)
+                        {
+                            InlineReference(subRuleReference, ruleSet);
+                        }
+                    });
+                }
+            }
+
+            alias = alias.CreateMemberwiseClone();
+            alias.Tag = tag;            
+
+            return alias;
+        }
+
+        /// <summary>
+        /// Replace rules in the ruleset with optimized versions eg
+        /// Repeat(Char, min, max) => Char(min, max)
+        /// (Not, $) => Not(Skip = 1) // <- to do
+        /// </summary>
+        /// <param name="ruleSet"></param>
+        private static void Substitude(Dictionary<string, IRule> ruleSet)
+        {
+            foreach (var rule in ruleSet)
+            {
+                if (rule.Value is IRuleGroup ruleGroup)
+                {
+                    TrySubstitudeSubrules(ruleGroup);
+                }
+                else if (rule.Value is IMetaRule metaRule)
+                {
+                    TrySubstitudeSubrule(metaRule);
+                }
+                else
+                {
+                    TrySubstitudeRule(rule.Key, rule.Value, ruleSet);
+                }
+            }
+        }
+
+        private static void TrySubstitudeSubrules(IRuleGroup group)
+        {
+            for (var i = 0; i < group.Subrules.Length; i++)
+            {
+                var subRule = group.Subrules[i];
+
+                if (subRule is RepeatRule repeatRule && repeatRule.Subrule is CharRule charRule)
+                {
+                    group.Subrules[i] = SubstitudeRepeatRule(repeatRule, charRule);
+                }
+            }
+        }
+
+        private static void TrySubstitudeSubrule(IMetaRule metaRule)
+        {
+            if (metaRule.Subrule is RepeatRule repeatRule && repeatRule.Subrule is CharRule charRule)
+            {
+                metaRule.Subrule = SubstitudeRepeatRule(repeatRule, charRule);
+            }
+        }
+
+        private static void TrySubstitudeRule(string key, IRule rule, Dictionary<string, IRule> ruleSet)
+        {
+            if (rule is RepeatRule repeatRule && repeatRule.Subrule is CharRule charRule)
+            {
+                ruleSet[key] = SubstitudeRepeatRule(repeatRule, charRule);
+            }
+        }
+
+        private static CharRule SubstitudeRepeatRule(RepeatRule repeatRule, CharRule charRule)
+        {
+            var inlineCharRule = (CharRule)charRule.Clone();
+
+            inlineCharRule.Min = repeatRule.Min;
+            inlineCharRule.Max = repeatRule.Max;
+
+            return inlineCharRule;
+        }       
     }
 }

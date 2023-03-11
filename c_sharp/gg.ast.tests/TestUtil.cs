@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -112,7 +113,7 @@ namespace gg.ast.tests
                 try
                 {
                     var result = rule.Parse(text);
-                    result.Nodes[0].ToString((s) => Debug.Write(s), text);
+                    result.Nodes[0].PrintTree((s) => Debug.Write(s), text);
                     Assert.Fail();
                 }
                 catch (ParseException e)

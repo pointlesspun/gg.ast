@@ -33,6 +33,14 @@ namespace gg.ast.common
             };
         }
 
+        /// <summary>
+        /// Create an optional rule, similar to the ? operator in a spec file
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="whitespace"></param>
+        /// <param name="visibility"></param>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public static IRule Optional(
             IRule other, 
             IRule whitespace = null, 

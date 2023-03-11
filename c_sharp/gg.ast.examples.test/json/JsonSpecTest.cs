@@ -1,14 +1,14 @@
 ﻿/* (c) pointless pun, license: cc attribution 3.0 unported https://creativecommons.org/licenses/by/3.0/ */
 
 using System.Diagnostics;
-using System.IO;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.core;
 
 using gg.ast.interpreter;
-using gg.ast.util;
+
+using static gg.ast.util.FileCache;
 
 namespace gg.ast.tests.interpreter
 {
@@ -29,7 +29,8 @@ namespace gg.ast.tests.interpreter
                 ("-0.2", "number", "decimal"),
                 ("0.1e123", "number", "exponent"),
             };
-            var interpreter = new ParserFactory().ParseFileRules("json/json.spec")["jsonValue"];
+            var fileText = LoadTextFile("specfiles/json.spec");
+            var interpreter = new ParserFactory().ParseRules(fileText)["jsonValue"];
 
             Debug.WriteLine(interpreter.PrintRuleTree());
 
@@ -56,8 +57,8 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void DonutTest()
         {
-            var interpreter = new ParserFactory().ParseFile("json/json.spec");
-            var donutText = File.ReadAllText("json/donuts.json");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("specfiles/json.spec"));
+            var donutText = LoadTextFile("json/donuts.json");
             var result = interpreter.Parse(donutText);
 
             Assert.IsTrue(result.IsSuccess);
@@ -68,13 +69,13 @@ namespace gg.ast.tests.interpreter
         [TestMethod]
         public void ScienceTest()
         {
-            var interpreter = new ParserFactory().ParseFile("json/json.spec");
-            var scienceText = File.ReadAllText("json/science.json");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("specfiles/json.spec"));
+            var scienceText = LoadTextFile("json/science.json");
             var result = interpreter.Parse(scienceText);
 
             Assert.IsTrue(result.IsSuccess);
 
-            var output = new MermaidOutput()
+            /*var output = new MermaidOutput()
             {
                 CullNotVisibleNodes = true
             };
@@ -84,6 +85,7 @@ namespace gg.ast.tests.interpreter
             // output.ToMDFile(interpreter, order: MermaidOutput.Order.DepthFirst);
 
             // result.Nodes[0].ToString(s => Debug.Write(s), donutText);
+            */
         }
     }
 }

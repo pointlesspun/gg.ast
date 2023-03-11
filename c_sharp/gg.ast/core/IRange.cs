@@ -2,6 +2,9 @@
 
 namespace gg.ast.core
 {
+    /// <summary>
+    /// Defines a range between min and max.
+    /// </summary>
     public interface IRange
     {
         public int Min { get; set; }

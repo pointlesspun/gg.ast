@@ -2,6 +2,9 @@
 
 namespace gg.ast.core
 {
+    /// <summary>
+    /// A rule containing a single other rule
+    /// </summary>
     public interface IMetaRule : IRule
     {
         IRule Subrule { get; set; }

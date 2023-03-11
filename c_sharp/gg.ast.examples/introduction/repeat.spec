@@ -4,7 +4,7 @@
  * Demonstrate various forms of repeating rules
  */
 
-helloWorld = "hello world";
+helloWorld				= "hello world";
 
 // short hand forms, short hand does not parse whitespace
 zeroOrOne               = helloWorld?;
@@ -12,9 +12,9 @@ zeroOrMore              = helloWorld*;
 oneOrMore               = helloWorld+;
 
 // explicit form repeats allowing for whitespace in between
-explicitWs.zeroOrOne    = helloWorld[..1];
+explicitWs.zeroOrOne    = helloWorld[ .. 1];
 explicitWs.zeroOrMore   = helloWorld[];
-explicitWs.oneOrMore    = helloWorld[1..];
+explicitWs.oneOrMore    = helloWorld[ 1.. ];
 explicitWs.oneOrTwo     = helloWorld[1..2];
 explicitWs.two          = helloWorld[2];
 

@@ -145,6 +145,7 @@ namespace gg.ast.util
                         'r' => '\r',
                         'n' => '\n',
                         '\"' => '\"',
+                        '\'' => '\'',
                         _ => throw new FormatException($"unknown escape character {c}")
                     };
                     chars[output++] = c;

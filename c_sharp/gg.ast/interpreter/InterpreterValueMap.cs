@@ -19,14 +19,17 @@ namespace gg.ast.interpreter
         /// <param name="config"></param>
         /// <param name="existingValueMap"></param>
         /// <param name="referenceRuleList">Stores all reference rules created via this valuemap. This way
-        /// reference rules can easily be retrieved and resolved at a later time.</param>
+        /// reference rules can easily be retrieved and resolved at a later time. 
+        /// parameter</param>
         /// <returns></returns>
         public static ValueMap CreateValueMap(
             InterpreterConfig config,
-            List<ReferenceRule> referenceRuleList,
+            List<ReferenceRule> referenceRuleList = null,
             ValueMap existingValueMap = null)
         {
             var interpreterValueMap = existingValueMap ?? TypeRules.CreateValueMap();
+
+            referenceRuleList ??= new List<ReferenceRule>();
 
             interpreterValueMap[config.Tags.RuleTag] = (str, node) =>
                 str.AsSpan(node.StartIndex, node.Length).ToString();
@@ -50,7 +53,7 @@ namespace gg.ast.interpreter
                 CreateCharRule(config, str, node, CharRule.MatchType.Any);
 
             interpreterValueMap[config.Tags.MatchCharactersInRange] = (str, node) =>
-                CreateCharRule(config, str, node, CharRule.MatchType.InMultiRange);
+                CreateCharRule(config, str, node, CharRule.MatchType.InRange);
 
             interpreterValueMap[config.Tags.MatchCharactersInEnumeration] = (str, node) =>
                 CreateCharRule(config, str, node, CharRule.MatchType.InEnumeration);
@@ -63,6 +66,9 @@ namespace gg.ast.interpreter
 
             interpreterValueMap[config.Tags.RuleValue] = (str, node) =>
                 CreateRuleValue(config, interpreterValueMap, str, node);
+
+            interpreterValueMap[config.Tags.RepeatExact] = (str, node) =>
+                interpreterValueMap[TypeRules.Tags.Integer](str, node);
 
             interpreterValueMap[config.Tags.UnaryValue] = (str, node) =>
                 CreateRuleValue(config, interpreterValueMap, str, node);
@@ -89,7 +95,6 @@ namespace gg.ast.interpreter
             referenceRuleList.Add(result);
 
             return result;
-
         }
 
         private static IRule CreateLiteralRule(string str, AstNode node) 
@@ -124,6 +129,12 @@ namespace gg.ast.interpreter
                 {
                     var subrule = map.Map<IRule>(str, value);
                     subrules[idx] = subrule;
+
+                    if (subrule is ReferenceRule refRule)
+                    {
+                        refRule.Parent = rule;
+                    } 
+                        
 
                     // if the subrule is not a reference, make it hidden 
                     // (that's "how" this is meant to work) 
@@ -187,14 +198,19 @@ namespace gg.ast.interpreter
 
             // some more custom code to deal with the build in properties of
             // the char rule
-            if (notIndex >= 0 
-                && ruleValue is CharRule charRule 
-                && charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+            if (notIndex >= 0 && ruleValue is CharRule charRule)
             {
-                charRule.MatchCharacters = CharRule.MatchType.NotInEnumeration;
+                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+                {
+                    charRule.MatchCharacters = CharRule.MatchType.NotInEnumeration;
+                }
+                else if (charRule.MatchCharacters == CharRule.MatchType.InRange)
+                {
+                    charRule.MatchCharacters = CharRule.MatchType.NotInRange;
+                }
             }
 
-            return repeatRule ?? (notRule ?? ruleValue);
+             return repeatRule ?? (notRule ?? ruleValue);
         }
 
         /// <summary>
@@ -206,20 +222,28 @@ namespace gg.ast.interpreter
         {
             if (ruleValue is CharRule charRule)
             {
-                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration)
+                if (charRule.MatchCharacters == CharRule.MatchType.InEnumeration
+                    || charRule.MatchCharacters == CharRule.MatchType.InRange)
                 {
                     // the not part is already defined in the charrule
                     // itself don't need to do anything
                     return null;
                 }
             }
-            
-            return new NotRule()
+
+            var notRule = new NotRule()
             {
                 Subrule = ruleValue,
                 Visibility = NodeVisiblity.Transitive,
                 Skip = tag == config.Tags.NotAndSkip ? 1 : 0
             };
+
+            if (ruleValue is ReferenceRule refRule)
+            {
+                refRule.Parent = notRule;
+            }
+
+            return notRule;
         }
         
         private static RepeatRule CreateRepeatRule(
@@ -249,6 +273,12 @@ namespace gg.ast.interpreter
 
                 repeatRule.Subrule = notRule ?? ruleValue;
                 repeatRule.Visibility = NodeVisiblity.Transitive;
+
+                if (repeatRule.Subrule is ReferenceRule repeatRefRule)
+                {
+                    repeatRefRule.Parent = repeatRule;
+                }
+
                 return repeatRule;
             }
         }
@@ -355,7 +385,7 @@ namespace gg.ast.interpreter
                 case CharRule.MatchType.Any:
                     result.Tag = $"{config.Tags.Unnamed} {config.Tags.MatchAnyCharacter}";
                     break;
-                case CharRule.MatchType.InMultiRange:
+                case CharRule.MatchType.InRange:
                     result.Tag = $"{config.Tags.Unnamed} {config.Tags.MatchCharactersInRange}";
                     result.Characters = str.Substring(node.StartIndex + 1, node.Length - 2).ReplaceEscapeCharacters();
                     break;
@@ -384,7 +414,16 @@ namespace gg.ast.interpreter
                 Visibility = NodeVisiblity.Transitive
             };
 
-            SetRangeMinMax(config, map, str, rule, node[0]);
+            // if there are no children the specification is whitespace eg '[]' or '< >'
+            if (node.Children == null || node.Children.Count == 0)
+            {
+                rule.Min = -1;
+                rule.Max = -1;
+            }
+            else
+            {
+                SetRangeMinMax(config, map, str, rule, node[0]);
+            }
             
             return rule;
         }
@@ -403,7 +442,15 @@ namespace gg.ast.interpreter
             }
             else if (repeatDefinition.Tag == config.Tags.RepeatExact)
             {
-                rangedRule.Min = map.Map<int>(str, repeatDefinition[0]);
+                if (repeatDefinition.Children == null || repeatDefinition.Children.Count == 0)
+                {
+                    rangedRule.Min = map.Map<int>(str, repeatDefinition);
+                }
+                else
+                {
+                    rangedRule.Min = map.Map<int>(str, repeatDefinition[0]);
+                }
+
                 rangedRule.Max = rangedRule.Min;
             }
             else if (repeatDefinition.Tag == config.Tags.RepeatNoMoreThanN)
@@ -421,7 +468,8 @@ namespace gg.ast.interpreter
                 rangedRule.Min = 1;
                 rangedRule.Max = -1;
             }
-            else if (repeatDefinition.Tag == config.Tags.RepeatZeroOrMore)
+            else if (repeatDefinition.Tag == config.Tags.RepeatZeroOrMore
+                    || repeatDefinition.Tag == config.Tags.RepeatUnaryZeroOrMore)
             {
                 rangedRule.Min = -1;
                 rangedRule.Max = -1;

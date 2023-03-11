@@ -16,7 +16,7 @@ namespace gg.ast.core
         /// </summary>
         private static int _ruleIndex = 0;
 
-        public IRule Parent { get; set; }
+        
 
         public int Id { get; set; }
 
@@ -58,6 +58,11 @@ namespace gg.ast.core
         public virtual object Clone()
         {
             return MemberwiseClone();
+        }
+
+        public IRule CreateMemberwiseClone()
+        {
+            return (IRule) MemberwiseClone();
         }
 
         protected abstract ParseResult ParseRule(string text, int index);

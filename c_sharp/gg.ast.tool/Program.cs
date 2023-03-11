@@ -13,18 +13,40 @@ var toolCommandLineArgs = new ToolConfig();
 try
 {
     CommandLineArgument.ReadCommandLine(toolCommandLineArgs, args);
-    var mainRule = new ParserFactory().ParseFile(toolCommandLineArgs.SpecFilename.Value);
-    var mermaid = new MermaidOutput();
+    var config = new InterpreterConfig();
 
-    Console.WriteLine($"writing {toolCommandLineArgs.SpecFilename.Value} to {toolCommandLineArgs.MermaidOutputFilename.Value}...");
+    string? options = null;
 
     if (!string.IsNullOrEmpty(toolCommandLineArgs.Options.Value))
     {
-        var options = toolCommandLineArgs.Options.Value;
+        options = toolCommandLineArgs.Options.Value;
+        config.InlineReferences = !options.Contains('r');
+    }
+
+    var mainRule = new ParserFactory(config).ParseFile(toolCommandLineArgs.SpecFilename.Value);
+    var mermaid = new MermaidOutput();
+
+    Console.WriteLine($"writing {toolCommandLineArgs.SpecFilename.Value} to {toolCommandLineArgs.MermaidOutputFilename.Value}...");
+    var toMdFile = false;
+
+    if (options != null)
+    {
         mermaid.ShowReferenceRules = options.Contains('r');
         mermaid.AllowDuplicateBranches = options.Contains('d');
+        
+        toMdFile = options.Contains('m');
+
+        Console.WriteLine($"show reference rules {mermaid.ShowReferenceRules}, allow duplicates {mermaid.AllowDuplicateBranches}.");
     }
-    mermaid.ToChartFile(mainRule, toolCommandLineArgs.MermaidOutputFilename.Value);
+
+    if (toMdFile)
+    {
+        mermaid.ToMDFile(mainRule, toolCommandLineArgs.MermaidOutputFilename.Value);
+    }
+    else
+    {
+        mermaid.ToChartFile(mainRule, toolCommandLineArgs.MermaidOutputFilename.Value);
+    }
 }
 catch (ArgumentException ae)
 {

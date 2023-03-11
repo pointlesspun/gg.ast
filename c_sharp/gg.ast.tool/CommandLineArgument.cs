@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿/* (c) pointless pun, license: cc attribution 3.0 unported https://creativecommons.org/licenses/by/3.0/ */
+
+using System.Text;
 
 namespace gg.ast.tool
 {

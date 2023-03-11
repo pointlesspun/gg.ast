@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using gg.ast.core;
 using gg.ast.core.rules;
 using gg.ast.interpreter;
+using gg.ast.util;
 
 namespace gg.ast.examples.introduction
 {
@@ -82,7 +83,7 @@ namespace gg.ast.examples.introduction
 
         public static Dictionary<string, IRule> LoadSpecFileRules(string specFile = "introduction/not.spec")
         {
-            return new ParserFactory().ParseFileRules(specFile);
+            return new ParserFactory().ParseRules(FileCache.LoadTextFile(specFile));
         }
     }
 }

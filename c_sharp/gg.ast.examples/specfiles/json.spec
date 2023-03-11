@@ -3,7 +3,7 @@
 /*
  * Example of a minimal json specification.
  */
-using "types/types.spec";
+using "./specfiles/types.spec";
 
 document = array | object;
 

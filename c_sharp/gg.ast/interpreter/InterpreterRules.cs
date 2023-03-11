@@ -183,7 +183,6 @@ namespace gg.ast.interpreter
             };
         }
 
-
         /// <summary>
         /// Create a "loose" rule to match identifiers. Identifiers can be anything
         /// made out of alphanumeric and _ or @ characters.
@@ -209,7 +208,7 @@ namespace gg.ast.interpreter
             {
                 Tag = "alphanumeric",
                 Characters = "azAZ09",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Visibility = NodeVisiblity.Hidden
             };
 
@@ -256,7 +255,7 @@ namespace gg.ast.interpreter
 
             return new SequenceRule()
             {
-                Tag = config.Tags.Group,
+                Tag = config.Tags.Grouping,
                 Visibility = visibility,
                 WhiteSpaceRule = config.WhiteSpace,
                 Subrules = new IRule[]

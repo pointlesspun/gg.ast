@@ -2,6 +2,9 @@
 
 namespace gg.ast.tool
 {
+    /// <summary>
+    /// Configuration filled with data from the command line args
+    /// </summary>
     public class ToolConfig
     {
         public CommandLineArgument SpecFilename { get; private set; } = 
@@ -12,7 +15,7 @@ namespace gg.ast.tool
 
         public CommandLineArgument Options { get; private set; } = 
             new CommandLineArgument('o', "options", isOptional: true, 
-                    description: "\n\t\tMermaid chart options eg -r, -rd, 'r': show reference files, 'd' allow for duplicates.");
+                    description: "\n\t\tMermaid chart options eg -r, -rd, 'r': show reference nodes, 'd' allow for duplicates.");
     }
 }
 

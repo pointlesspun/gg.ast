@@ -13,11 +13,24 @@ namespace gg.ast.core
     /// </summary>
     public static class AstExtensions
     {
+        /// <summary>
+        /// Map the parse result to a value 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="result">The result of a parse operation </param>
+        /// <param name="text">The text used in parsing</param>
+        /// <param name="map">A map defining a map from (tag, text) onto a value</param>
+        /// <returns></returns>
         public static T Map<T>(this ParseResult result, string text, ValueMap map)
         {
             return map.Map<T>(text, result.Nodes[0]);
         }        
 
+        /// <summary>
+        /// Create a list of nodes from the current node up to the root of the tree
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public static List<AstNode> GetPathToRoot(this AstNode node)
         {
             var result = new List<AstNode>();
@@ -38,7 +51,17 @@ namespace gg.ast.core
             return result;
         }
 
-        public static void ToString(
+        /// <summary>
+        /// Prints the tree to stdout
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="output"></param>
+        /// <param name="text"></param>
+        /// <param name="indent"></param>
+        /// <param name="indentIncrement"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="shortTextLength"></param>
+        public static void PrintTree(
             this AstNode node,
             Action<string> output,
             string text,
@@ -68,12 +91,44 @@ namespace gg.ast.core
             {
                 foreach (var child in node.Children)
                 {
-                    child.ToString(output, text, indent + indentIncrement, indentIncrement, maxLength, shortTextLength);
+                    child.PrintTree(output, text, indent + indentIncrement, indentIncrement, maxLength, shortTextLength);
                 }
             }
         }        
 
-        public static string GetTag(this AstNode node) => node.Rule.Tag;        
+        /// <summary>
+        /// Short hand to get the rule's tag
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static string GetTag(this AstNode node) => node.Rule.Tag;
+
+        /// <summary>
+        /// Go through a rule graph and collect all unique rules and subrules
+        /// </summary>
+        /// <param name="rule">The start of the graph</param>
+        /// <param name="collectedRules">Optional result container, will be created if none is provided</param>
+        /// <returns>A HashSet of all rules in this rule graph</returns>
+        public static HashSet<IRule> CollectRules(this IRule rule, HashSet<IRule> collectedRules = null)
+        {
+            collectedRules ??= new HashSet<IRule>();
+
+            if (!collectedRules.Contains(rule))
+            {
+                collectedRules.Add(rule);
+
+                if (rule is IMetaRule metaRule && metaRule.Subrule != null)
+                {
+                    CollectRules(metaRule.Subrule, collectedRules);
+                }
+                else if (rule is IRuleGroup group && group.Subrules != null)
+                {
+                    group.Subrules.ForEachIndexed((subrule, _) => CollectRules(subrule, collectedRules));    
+                }
+            }
+
+            return collectedRules;
+        }
 
         public static string PrintRuleTree(
             this IRule rule, 

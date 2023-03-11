@@ -19,14 +19,9 @@ namespace gg.ast.core.rules
             Any,
             
             /// <summary>
-            /// Match a character in a range eg a to z
-            /// </summary>
-            InRange,
-
-            /// <summary>
             /// Match a character in a several ranges eg a to z, A to Z and 0 to 9
             /// </summary>
-            InMultiRange,
+            InRange,
 
             /// <summary>
             /// Match a character against a set of characters eg 'abc123#'
@@ -36,7 +31,12 @@ namespace gg.ast.core.rules
             /// <summary>
             /// Match a character which is not included a set of characters eg 'abc123#'
             /// </summary>
-            NotInEnumeration
+            NotInEnumeration,
+
+            /// <summary>
+            /// Match a character which is not in a given range eg 'az03' matches A, Z or 4
+            /// </summary>
+            NotInRange
         };
 
         private string _characters;
@@ -79,10 +79,10 @@ namespace gg.ast.core.rules
                 return MatchCharacters switch
                 {
                     MatchType.Any => Match(text, index),
-                    MatchType.InRange => Match(text, index, c => c >= Characters[0] && c <= Characters[1]),
-                    MatchType.InMultiRange => Match(text, index, c => IsInMultiRange(c, Characters)),
+                    MatchType.InRange => Match(text, index, c => IsRange(c, Characters)),
                     MatchType.InEnumeration => Match(text, index, c => Characters.Contains(c)),
                     MatchType.NotInEnumeration => Match(text, index, c => Characters.IndexOf(c) < 0),
+                    MatchType.NotInRange => Match(text, index, c => !IsRange(c, Characters)),
                     _ => ParseResult.Fail,
                 };
             }
@@ -112,7 +112,7 @@ namespace gg.ast.core.rules
                     : ParseResult.Fail;
         }
         
-        private static bool IsInMultiRange(char c, string multiRange)
+        private static bool IsRange(char c, string multiRange)
         {
             for (var i = 0; i < multiRange.Length; i += 2)
             {

@@ -43,8 +43,10 @@ namespace gg.ast.tests.interpreter
                 ("!'enumeration'[]", 3, config.Tags.MatchCharactersInEnumeration, config.Tags.Not,
                          new Type[] { typeof(CharRule) }),
 
+                // expect one child here as both the not and repeat will be folded into the
+                // char rule 
                 ("!`range`[]", 3, config.Tags.MatchCharactersInRange, config.Tags.Not,
-                         new Type[] { typeof(NotRule), typeof(CharRule) }),
+                         new Type[] { typeof(CharRule) }),
 
                 ("!$[]", 3, config.Tags.MatchAnyCharacter, config.Tags.Not,
                          new Type[] { typeof(NotRule), typeof(CharRule) }),

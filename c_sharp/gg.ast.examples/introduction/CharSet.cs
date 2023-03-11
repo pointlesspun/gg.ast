@@ -6,6 +6,8 @@ using gg.ast.core;
 using gg.ast.core.rules;
 using gg.ast.interpreter;
 
+using static gg.ast.util.FileCache;
+
 namespace gg.ast.examples.introduction
 {
     public class CharSet
@@ -24,7 +26,7 @@ namespace gg.ast.examples.introduction
             return new CharRule()
             {
                 Tag = "aToZSet",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Characters = "az"
             };
         }
@@ -34,7 +36,7 @@ namespace gg.ast.examples.introduction
             return new CharRule()
             {
                 Tag = "wideSet",
-                MatchCharacters = CharRule.MatchType.InMultiRange,
+                MatchCharacters = CharRule.MatchType.InRange,
                 Characters = "azAZ09"
             };
         }
@@ -61,7 +63,8 @@ namespace gg.ast.examples.introduction
 
         public static Dictionary<string, IRule> CharSetSpecFile(string specFile = "introduction/charsets.spec")
         {
-            return new ParserFactory().ParseFileRules(specFile);
+            var rules = LoadTextFile(specFile);
+            return new ParserFactory().ParseRules(rules);
         }
     }
 }

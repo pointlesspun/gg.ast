@@ -7,8 +7,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using gg.ast.core;
 using gg.ast.core.rules;
-
 using gg.ast.interpreter;
+
+using static gg.ast.util.FileCache;
 
 namespace gg.ast.tests.interpreter
 {
@@ -35,11 +36,11 @@ namespace gg.ast.tests.interpreter
         {
             var inputText = "hello ref world";
 
-            var interpreter = new ParserFactory().ParseFile("data/helloReference.txt");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("data/helloReference.txt"));
             var result = interpreter.Parse(inputText);
 
             Assert.IsTrue(result.IsSuccess);
-            Assert.IsTrue(result.Nodes[0].Tag == "helloWorld");
+            Assert.IsTrue(result.Nodes[0].Tag == "main");
             Assert.IsTrue(result.Nodes[0].Length == inputText.Length);
         }
 
@@ -54,7 +55,7 @@ namespace gg.ast.tests.interpreter
                 "hello \n sequence \n \t \r world"
             };
 
-            var interpreter = new ParserFactory().ParseFile("data/helloSequence.txt");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("data/helloSequence.txt"));
 
             foreach (var input in inputText)
             {
@@ -77,7 +78,7 @@ namespace gg.ast.tests.interpreter
                 ("hellosequenceworld", true),
             };
 
-            var interpreter = new ParserFactory().ParseFile("data/helloSequenceNoSeparator.txt");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("data/helloSequenceNoSeparator.txt"));
 
             foreach (var (text, isSuccess) in testData)
             {
@@ -106,7 +107,7 @@ namespace gg.ast.tests.interpreter
                 "/* ! */ hello /**/ \n sequence \n \t \r world /* . */"
             };
 
-            var interpreter = new ParserFactory().ParseFile("data/helloSequenceWithComments.txt");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("data/helloSequenceWithComments.txt"));
 
             foreach (var input in inputText)
             {
@@ -129,7 +130,7 @@ namespace gg.ast.tests.interpreter
                 "world",
             };
 
-            var interpreter = new ParserFactory().ParseFile("data/helloOr.txt");
+            var interpreter = new ParserFactory().Parse(LoadTextFile("data/helloOr.txt"));
 
             foreach (var input in inputText)
             {
@@ -197,7 +198,7 @@ namespace gg.ast.tests.interpreter
 
         private void TestRepeatRule(string filename, (string text, int childCount, int tokenCount)[] testData)
         { 
-            var interpreter = new ParserFactory().ParseFile(filename);
+            var interpreter = new ParserFactory().Parse(LoadTextFile(filename));
             
             Debug.WriteLine(interpreter.PrintRuleTree());
 
@@ -208,7 +209,7 @@ namespace gg.ast.tests.interpreter
                 Assert.IsTrue(result.IsSuccess);
 
                 Debug.WriteLine("\n-------\n");
-                result.Nodes[0].ToString((s) => Debug.Write(s), text);
+                result.Nodes[0].PrintTree((s) => Debug.Write(s), text);
 
                 Assert.IsTrue(result.Nodes[0].Tag == "helloRepeatWorld");
                 Assert.IsTrue(result.Nodes[0].Length == text.Length);

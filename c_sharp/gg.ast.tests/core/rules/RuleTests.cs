@@ -20,39 +20,52 @@ namespace gg.ast.tests.core.rules
         public void AnyTryParse()
         {
             var text = "abz123";
-            var anyRule = new CharRule()
+            var matchCharRule = new CharRule()
             {
                 Characters = "az",
                 MatchCharacters = CharRule.MatchType.Any
             };
 
-            Assert.IsFalse(anyRule.Parse(text, -1).IsSuccess);
+            Assert.IsFalse(matchCharRule.Parse(text, -1).IsSuccess);
 
             for (var i = 0; i < 6; i++)
             {
-                Assert.IsTrue(anyRule.Parse(text, i).IsSuccess);
+                Assert.IsTrue(matchCharRule.Parse(text, i).IsSuccess);
             }
 
-            Assert.IsFalse(anyRule.Parse(text, 6).IsSuccess);
+            Assert.IsFalse(matchCharRule.Parse(text, 6).IsSuccess);
 
-            anyRule.MatchCharacters = CharRule.MatchType.InRange;
+            matchCharRule.MatchCharacters = CharRule.MatchType.InRange;
 
             for (var i = 0; i < 3; i++)
             {
-                Assert.IsTrue(anyRule.Parse(text, i).IsSuccess);
+                Assert.IsTrue(matchCharRule.Parse(text, i).IsSuccess);
             }
 
             for (var i = 3; i < 6; i++)
             {
-                Assert.IsFalse(anyRule.Parse(text, i).IsSuccess);
+                Assert.IsFalse(matchCharRule.Parse(text, i).IsSuccess);
             }
 
-            anyRule.MatchCharacters = CharRule.MatchType.InEnumeration;
+            matchCharRule.MatchCharacters = CharRule.MatchType.NotInRange;
 
-            Assert.IsTrue(anyRule.Parse(text, 0).IsSuccess);
-            Assert.IsFalse(anyRule.Parse(text, 1).IsSuccess);
-            Assert.IsTrue(anyRule.Parse(text, 2).IsSuccess);
-            Assert.IsFalse(anyRule.Parse(text, 3).IsSuccess);
+            for (var i = 0; i < 3; i++)
+            {
+                Assert.IsFalse(matchCharRule.Parse(text, i).IsSuccess);
+            }
+
+            for (var i = 3; i < 6; i++)
+            {
+                Assert.IsTrue(matchCharRule.Parse(text, i).IsSuccess);
+            }
+
+
+            matchCharRule.MatchCharacters = CharRule.MatchType.InEnumeration;
+
+            Assert.IsTrue(matchCharRule.Parse(text, 0).IsSuccess);
+            Assert.IsFalse(matchCharRule.Parse(text, 1).IsSuccess);
+            Assert.IsTrue(matchCharRule.Parse(text, 2).IsSuccess);
+            Assert.IsFalse(matchCharRule.Parse(text, 3).IsSuccess);
         }
 
         // --- Literal ------------------------------------------------------------------------------------------------

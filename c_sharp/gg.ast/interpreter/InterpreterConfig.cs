@@ -16,24 +16,23 @@ namespace gg.ast.interpreter
 
             public string Interpreter { get; set; } = "intepreter";
 
-
             public string Identifier { get; set; } = "identifier";
 
-            public string RuleList { get; set; } = "rule list";
+            public string RuleList { get; set; } = "ruleList";
             
             public string Rule { get; set; } = "rule";
 
             public string RuleVisibility { get; set; } = "rule visibility";
 
-            public string RuleTag { get; set; } = "rule tag";
+            public string RuleTag { get; set; } = "identifier";
             
-            public string RuleValue { get; set; } = "rule value";
+            public string RuleValue { get; set; } = "ruleValue";
 
-            public string UnaryValue { get; set; } = "unary value";
+            public string UnaryValue { get; set; } = "unaryValue";
 
-            public string RuleTerminator { get; set; } = "rule terminator";
+            public string RuleTerminator { get; set; } = "ruleTerminator";
 
-            public string RuleReference { get; set; } = "rule reference";
+            public string RuleReference { get; set; } = "ruleReference";
             
             public string Literal { get; set; } = "literal";
 
@@ -41,34 +40,35 @@ namespace gg.ast.interpreter
 
             public string Sequence { get; set; } = "sequence";
 
-            public string SequenceWithoutSeparator { get; set; } = "sequence without separator";
+            public string SequenceWithoutSeparator { get; set; } = "sequenceNoSeparator";
 
             public string SequenceSeparator { get; set; } = "sequence separator";
             
-            public string Or { get; set; } = "or-rule";
+            public string Or { get; set; } = "or";
             
-            public string OrSeparator { get; set; } = "or-rule separator";
+            public string OrSeparator { get; set; } = "or separator";
             
-            public string Repeat { get; set; } = "repeat";
+            public string Repeat { get; set; } = "repeat.ws";
 
-            public string RepeatNoWhitespace { get; set; } = "repeat no whitespace";
+            public string RepeatNoWhitespace { get; set; } = "repeat.noWs";
 
-            public string RepeatExact { get; set; } = "repeat exactly N";
+            public string RepeatExact { get; set; } = "repeat.exact";
             
-            public string RepeatZeroOrMore { get; set; } = "repeat zero or more";
+            public string RepeatZeroOrMore { get; set; } = "repeat.zeroOrMore";
 
-            public string RepeatZeroOrOne { get; set; } = "zero or one";
+            public string RepeatUnaryZeroOrMore { get; set; } = "repeat.unary.zeroOrMore";
 
+            public string RepeatZeroOrOne { get; set; } = "repeat.unary.zeroOrOne";
 
-            public string RepeatOneOrMore = "repeat one or more";
+            public string RepeatOneOrMore { get; set; } = "repeat.unary.oneOrMore";
             
-            public string RepeatNOrMore { get; set; } = "repeat N or more";
+            public string RepeatNOrMore { get; set; } = "repeat.nOrMore";
             
-            public string RepeatNoMoreThanN { get; set; } = "repeat no more than N";
+            public string RepeatNoMoreThanN { get; set; } = "repeat.noMoreThanM";
             
-            public string RepeatBetweenNandM { get; set; } = "repeat between N and M";
+            public string RepeatBetweenNandM { get; set; } = "repeat.betweenNandM";
 
-            public string Group { get; set; } = "group";
+            public string Grouping { get; set; } = "grouping";
 
             public string BeginGroup { get; set; } = "begin group";
 
@@ -78,21 +78,21 @@ namespace gg.ast.interpreter
 
             public string RuleSeparator { get; set; } = "rule separator";
 
-            public string MatchAnyCharacter { get; set; } = "match any character";
+            public string MatchAnyCharacter { get; set; } = "charRule.any";
 
-            public string MatchCharactersInRange { get; set; } = "match characters in range";
+            public string MatchCharactersInRange { get; set; } = "charRule.range";
 
-            public string MatchCharactersInEnumeration { get; set; } = "match characters in enumeration";
+            public string MatchCharactersInEnumeration { get; set; } = "charRule.enumeration";
 
             public string Not { get; set; } = "not";
 
-            public string NotAndSkip { get; set; } = "not&skip";
+            public string NotAndSkip { get; set; } = "notAndSkip";
 
             public string Whitespace { get; set; } = "whitespace";
 
             public string WhitespaceShortHand { get; set; } = "ws";
 
-            public string UseList { get; set; } = "use";
+            public string UseList { get; set; } = "usingStatements";
 
             public string UseFile { get; set; } = "use file";
         }
@@ -160,6 +160,13 @@ namespace gg.ast.interpreter
         /// If set to true unnamed rules inside groups and metarules will be hidden
         /// </summary>
         public bool HideUnnamedRules { get; set; } = true;
+
+        /// <summary>
+        /// If set to true all reference rules will be 'inlined' or 'aliased' (replaced) with their
+        /// actual values. If false the reference rules will stay as is. This is only for debugging
+        /// purposes as the Parsing will throw an exception when reference rules are left in.
+        /// </summary>
+        public bool InlineReferences { get; set; } = true;
 
         public static IRule CreateWhiteSpaceRule(CommentsConfig config = null, NodeVisiblity visibility = NodeVisiblity.Hidden)
         {
