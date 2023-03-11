@@ -4,7 +4,7 @@ The `gast tool` ([gg.ast.tool](../c_sharp/gg.ast.tool/Program.cs)) is a command 
 
 The command line options for the gast tool are:
 
-`gast.exe specfile --mermaid mermaidOutputfile --options rdm`
+`gast.exe specfile -m|--mermaid mermaidOutputfile -o|--options rdm`
 
 * `r`: show reference nodes. Having this option will add nodes produced by reference rules to the diagram.
 * `d`: allow duplicates. Normally the graph will only show unique nodes and will create loops if rules  are referred to by different rules. However this may create somewhat confusing diagrams. With duplication these references are replicated.

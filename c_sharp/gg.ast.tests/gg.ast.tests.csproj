@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="data\compoundReference.spec" />
     <None Remove="data\groupReference.spec" />
     <None Remove="data\helloOr.txt" />
     <None Remove="data\helloReference.txt" />
@@ -22,6 +23,12 @@
     <None Remove="data\singleInlineReference.spec" />
     <None Remove="util\json.spec" />
     <None Remove="util\mermaid.spec" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\compoundReference.spec">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

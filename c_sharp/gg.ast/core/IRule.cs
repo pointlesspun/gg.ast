@@ -48,5 +48,11 @@ namespace gg.ast.core
         /// <param name="index">Start index in the text</param>
         /// <returns>The result of applying this rule.</returns>
         ParseResult Parse(string text, int index = 0);
+
+        /// <summary>
+        /// Creates a shallow copy of this rule
+        /// </summary>
+        /// <returns>A shallow copy of this rule</returns>
+        IRule CreateMemberwiseClone();
     }
 }

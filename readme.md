@@ -108,39 +108,17 @@ var donutsObj = valueMap.Map<Dictionary<string, object>>(text, r.Nodes[0]);
 To learn more about gg.ast see:
 
 * [The rules documentation](./doc/1_rules.md) for examples and the specifics of all core rules available.
-* [gast tool documentation]() (forthcoming).
-* [parser details, aliasing, substitution]() (forthcoming).
-* [The project setup](./doc/2_project.md) for an outline of the organization of the code.
-
+* [gast tool documentation](./doc/2_gast.md) describes the 'gast' tool a CLI for gg.ast.
+* [The project setup](./doc/3_project.md) for an outline of the organization of the code.
+* [parser details, aliasing, substitution](./doc/4_substitution.md) explains how the ParseFactory optimizes a rule graph generated from a spec file by removing redundant nodes.
 
 # Backlog
-
-## v 0.2
-
-* More clean up and documentation
-	* Split up read me into a short read me and some different documentation
-	* Add substitution documentation
-	* Add tool documentation
-	* Add interpreter documentation
-
-### done
-
-* Implement interpreter in spec file
-* Create Mermaid files from RuleSets and Asts
-* Add example program start with `gg.ast "specfile" << input` or `gg.ast "specfile" -f "inputfile"`.
-* Add not_in_range to characters
-
-### rejected 
-
-* add long form for some: sequence(a,b,c), or(a,b), repeat(a, 3, 4), critical(), not(a), scan(x), move(-3), anchor("bla"), characters(any, "axsv"),
-	Not going to do this, needs to be done in the spec file.
-
 ## v 0.3
 
 * abort on failure (critical) = {"literal"};  {literal"[3]}
 * Improve Error handling / reporting
 * figure out a way to declare literals as case insensitive
-
+* Optimize inlining by not revisiting reference rules that may have been inlined already
 
 ## Beyond v0.3
 

@@ -2,7 +2,7 @@
   "profiles": {
     "gg.ast.tool": {
       "commandName": "Project",
-      "commandLineArgs": "example.spec -m example.md --options rdm"
+      "commandLineArgs": "example.spec -m example.md --options dm"
     }
   }
 }

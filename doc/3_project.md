@@ -30,3 +30,59 @@ Each of these methods produce a `ParseResult` a struct with the following proper
 
 Based on these concepts a number of all core rules are defined which can be used to parse texts. 
 
+```mermaid
+classDiagram
+  IRule <|-- IMetaRule
+  IRule <|-- IRuleGroup
+  IRule <|-- RuleBase
+  IMetaRule <|-- MetaRuleBase
+  IRuleGroup <|-- RuleGroupBase
+
+  RuleBase <|-- LiteralRule
+  RuleBase <|-- CharRule
+
+  MetaRuleBase <|-- NotRule
+  MetaRuleBase <|-- CriticalRule
+  MetaRuleBase <|-- RepeatRule
+  MetaRuleBase <|-- ReferenceRule
+
+  RuleGroupBase <|-- SequenceRule
+  RuleGroupBase <|-- OrRule
+
+  class IRule{
+    +NodeVisiblity Visibility
+    +string Tag
+    +ParseResult Parse(string text, int index=0)
+  }
+
+  class IMetaRule {
+    +IRule Subrule
+  }
+
+  class IRuleGroup {
+    +IRule[] Subrules
+    +IRule Whitespace
+  }
+
+  class CharRule {
+    +MatchType MatchCharacters 
+    +string Characters
+    +int Min
+    +int Max
+  }
+
+  class LiteralRule {
+    +string Characters
+    +bool IsCaseSensitive
+  }
+
+  class NotRule {
+    +int Skip
+    +bool FailOnEof
+  }
+
+  class RepeatRule {
+    +int Min
+    +int Max
+  }
+```

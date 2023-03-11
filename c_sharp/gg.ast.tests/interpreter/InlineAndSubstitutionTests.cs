@@ -86,7 +86,7 @@ namespace gg.ast.tests.interpreter
             Assert.IsNotNull(c);
 
             Assert.IsTrue(a.Tag == "a");
-            Assert.IsTrue(b.Tag == "b");           
+            Assert.IsTrue(b.Tag == "b");
             Assert.IsTrue(b.Subrule == a);
             Assert.IsTrue(c.Subrule == a);
         }
@@ -138,6 +138,36 @@ namespace gg.ast.tests.interpreter
             Assert.IsTrue(g.Subrules[2] == b);
             Assert.IsTrue(g.Subrules[3] == e);
         }
+
+        [TestMethod]
+        public void CompoundSubstitutionTest()
+        {
+            var rules = new ParserFactory().ParseRules(LoadTextFile("./data/compoundReference.spec"));
+
+            var mainRule = rules["rule"] as OrRule;
+            var a = rules["a"] as LiteralRule;
+            var b = rules["b"] as SequenceRule;
+            var c = rules["c"] as SequenceRule;
+
+            Assert.IsNotNull(mainRule);
+            Assert.IsNotNull(a);
+            Assert.IsNotNull(b);
+            Assert.IsNotNull(c);
+
+            Assert.IsTrue(mainRule.Tag == "rule");
+            Assert.IsTrue(a.Tag == "a");
+            Assert.IsTrue(b.Tag == "b");
+            Assert.IsTrue(c.Tag == "c");
+
+            Assert.IsTrue(mainRule.Subrules[0] == a);
+            Assert.IsTrue(mainRule.Subrules[1] == b);
+            Assert.IsTrue(c.Subrules[0] == a);
+            Assert.IsTrue(b.Subrules[1] is LiteralRule);
+            Assert.IsTrue(b.Subrules[1].Tag == "\"bar\"");
+            Assert.IsTrue(b.Subrules[0] == a);
+            Assert.IsTrue(b.Subrules[1] is LiteralRule);
+        }
     }
 }
+
 

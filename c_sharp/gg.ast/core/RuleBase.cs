@@ -60,6 +60,11 @@ namespace gg.ast.core
             return MemberwiseClone();
         }
 
+        public IRule CreateMemberwiseClone()
+        {
+            return (IRule) MemberwiseClone();
+        }
+
         protected abstract ParseResult ParseRule(string text, int index);
 
         protected ParseResult BuildResult(bool isSuccess, int index, int length, List<AstNode> children = null)

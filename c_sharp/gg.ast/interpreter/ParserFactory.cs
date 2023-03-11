@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-
+using System.Linq;
 using gg.ast.core;
 using gg.ast.core.rules;
-
+using gg.ast.util;
 using static gg.ast.interpreter.InterpreterRules;
 
 namespace gg.ast.interpreter
@@ -261,9 +261,15 @@ namespace gg.ast.interpreter
                 if (rule.Parent is IRuleGroup ruleGroup)
                 {
                     var ruleIndex = Array.IndexOf(ruleGroup.Subrules, rule);
-                    ruleGroup.Subrules[ruleIndex] = alias;
+
+                    // if the ruleIndex cannot be found, the inlining has happened 
+                    // before so skip it
+                    if (ruleIndex != -1)
+                    {
+                        ruleGroup.Subrules[ruleIndex] = alias;
+                    }
                 }
-                else if (rule.Parent is IMetaRule metaRule)
+                else if (rule.Parent is IMetaRule metaRule && metaRule.Subrule == rule)
                 {
                     metaRule.Subrule = alias;
                 }
@@ -275,9 +281,24 @@ namespace gg.ast.interpreter
             while (alias is ReferenceRule deref)
             {
                 alias = ruleSet[deref.Reference];
+
+                if (alias is IMetaRule metaRule && metaRule.Subrule is ReferenceRule metaRuleReference)
+                {
+                    InlineReference(metaRuleReference, ruleSet);
+                }
+                else if (alias is IRuleGroup ruleGroup && ruleGroup.Subrules.Any( subRule => subRule is ReferenceRule))
+                {
+                    ruleGroup.Subrules.ForEachIndexed( (subRule, idx) =>
+                    {
+                        if (subRule is ReferenceRule subRuleReference)
+                        {
+                            InlineReference(subRuleReference, ruleSet);
+                        }
+                    });
+                }
             }
 
-            alias = (IRule)alias.Clone();
+            alias = alias.CreateMemberwiseClone();
             alias.Tag = tag;            
 
             return alias;
